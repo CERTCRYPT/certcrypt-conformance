@@ -1,0 +1,1652 @@
+{
+  "primitive": "subject_ai_decision_canonicalization",
+  "description": "Canonicalization and record-local material binding for subject.ai-decision/1.",
+  "profile": "subject.ai-decision/1",
+  "nonce_hex": "abababababababababababababababababababababababababababababababab",
+  "vectors": [
+    {
+      "name": "multimodal-synthetic",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "part_materials": {
+        "prompt": "Classify synthetic sample alpha.",
+        "image": "synthetic-png-byte-stream",
+        "answer": "label: category-a"
+      },
+      "expected_canonical_utf8": "{\"context\":{\"sample_ref\":\"synthetic-sample-01\"},\"decided_at\":\"2026-06-17T10:30:00.000Z\",\"decision\":\"category-a\",\"decision_id\":\"synthetic-event-01\",\"input\":[{\"commitment_digest_hex\":\"47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2\",\"id\":\"prompt\",\"material_nonce_hex\":\"0101010101010101010101010101010101010101010101010101010101010101\",\"media_type\":\"text/plain\",\"profile\":\"subject.text/1\",\"role\":\"prompt\"},{\"commitment_digest_hex\":\"e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da\",\"id\":\"image\",\"material_nonce_hex\":\"0202020202020202020202020202020202020202020202020202020202020202\",\"media_type\":\"image/png\",\"profile\":\"subject.binary/1\",\"role\":\"image\"}],\"model\":{\"id\":\"synthetic-model\",\"provider\":\"synthetic-runtime\",\"version\":\"synthetic-model-v1\"},\"observation_scope\":\"client\",\"output\":[{\"commitment_digest_hex\":\"0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146\",\"id\":\"answer\",\"material_nonce_hex\":\"0303030303030303030303030303030303030303030303030303030303030303\",\"media_type\":\"text/plain\",\"profile\":\"subject.text/1\",\"role\":\"response\"}],\"parameters\":{\"temperature\":\"0.0\"},\"profile\":\"subject.ai-decision/1\",\"started_at\":\"2026-06-17T10:29:58.000Z\"}",
+      "expected_subject_local_digest_hex": "40efb366c17f72ab0ab1b7b65ac5b5006cfa2b9d1cb9c67c71dfb874967da658",
+      "expected_commitment_digest_hex": "591e72a89b83b4bca7075bb76ef138ba90d815dabb665c58420be2d0ca9661d1",
+      "why": "Multiple input media and one output are bound by ids unique within the record."
+    },
+    {
+      "name": "runtime-synthetic",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-runtime-event-01",
+        "decided_at": "2026-08-01T09:15:00.000Z",
+        "model": {
+          "id": "synthetic-runtime-model",
+          "provider": "synthetic-runtime"
+        },
+        "observation_scope": "runtime",
+        "input": [
+          {
+            "id": "features",
+            "role": "features",
+            "media_type": "application/octet-stream",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0404040404040404040404040404040404040404040404040404040404040404",
+            "commitment_digest_hex": "8cdf02f88d4b72c751727f06214b82a63780c92338877ec8fb2739245d4d1e6f"
+          }
+        ],
+        "output": [
+          {
+            "id": "outcome",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0505050505050505050505050505050505050505050505050505050505050505",
+            "commitment_digest_hex": "b316da61fb11069a1ffa4f86bc24c2a398e2e126db62ac95ae4f23350d78c55b"
+          }
+        ],
+        "decision": "category-b",
+        "actor_id": "synthetic-actor-01",
+        "policy_ref": "synthetic-policy-01"
+      },
+      "part_materials": {
+        "features": "synthetic runtime features",
+        "outcome": "category-b"
+      },
+      "expected_canonical_utf8": "{\"actor_id\":\"synthetic-actor-01\",\"decided_at\":\"2026-08-01T09:15:00.000Z\",\"decision\":\"category-b\",\"decision_id\":\"synthetic-runtime-event-01\",\"input\":[{\"commitment_digest_hex\":\"8cdf02f88d4b72c751727f06214b82a63780c92338877ec8fb2739245d4d1e6f\",\"id\":\"features\",\"material_nonce_hex\":\"0404040404040404040404040404040404040404040404040404040404040404\",\"media_type\":\"application/octet-stream\",\"profile\":\"subject.binary/1\",\"role\":\"features\"}],\"model\":{\"id\":\"synthetic-runtime-model\",\"provider\":\"synthetic-runtime\"},\"observation_scope\":\"runtime\",\"output\":[{\"commitment_digest_hex\":\"b316da61fb11069a1ffa4f86bc24c2a398e2e126db62ac95ae4f23350d78c55b\",\"id\":\"outcome\",\"material_nonce_hex\":\"0505050505050505050505050505050505050505050505050505050505050505\",\"media_type\":\"text/plain\",\"profile\":\"subject.text/1\",\"role\":\"response\"}],\"policy_ref\":\"synthetic-policy-01\",\"profile\":\"subject.ai-decision/1\"}",
+      "expected_subject_local_digest_hex": "796281b94b4c9b864f636f53f984c0ab917d35775341689f98e47b66e334f551",
+      "expected_commitment_digest_hex": "a928f4c6cba61af4cb0dcc2ddcca303fd8c580b83405f72a6e9aeea088b775f8",
+      "why": "A runtime observation binds one input and one output part."
+    },
+    {
+      "name": "chained-decision",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-chain-event-01",
+        "decided_at": "2026-08-01T09:16:00.000Z",
+        "model": {
+          "id": "synthetic-chain-model",
+          "provider": "synthetic-runtime"
+        },
+        "observation_scope": "runtime",
+        "input": [
+          {
+            "id": "prior",
+            "role": "prior-decision",
+            "media_type": "application/json",
+            "profile": "subject.ai-decision/1",
+            "material_nonce_hex": "0606060606060606060606060606060606060606060606060606060606060606",
+            "commitment_digest_hex": "ecd8acdf56b126e097cc06ccf0099356a85c94cf75613e8103025f7bea0827f3"
+          }
+        ],
+        "output": [
+          {
+            "id": "review",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0707070707070707070707070707070707070707070707070707070707070707",
+            "commitment_digest_hex": "aedfbe86092f893f84f17f1842090afd4eff1cd0fc6dd61c27558fea3db30a8d"
+          }
+        ],
+        "decision": "category-c"
+      },
+      "part_materials": {
+        "prior": "{\"actor_id\":\"synthetic-actor-01\",\"decided_at\":\"2026-08-01T09:15:00.000Z\",\"decision\":\"category-b\",\"decision_id\":\"synthetic-runtime-event-01\",\"input\":[{\"commitment_digest_hex\":\"8cdf02f88d4b72c751727f06214b82a63780c92338877ec8fb2739245d4d1e6f\",\"id\":\"features\",\"material_nonce_hex\":\"0404040404040404040404040404040404040404040404040404040404040404\",\"media_type\":\"application/octet-stream\",\"profile\":\"subject.binary/1\",\"role\":\"features\"}],\"model\":{\"id\":\"synthetic-runtime-model\",\"provider\":\"synthetic-runtime\"},\"observation_scope\":\"runtime\",\"output\":[{\"commitment_digest_hex\":\"b316da61fb11069a1ffa4f86bc24c2a398e2e126db62ac95ae4f23350d78c55b\",\"id\":\"outcome\",\"material_nonce_hex\":\"0505050505050505050505050505050505050505050505050505050505050505\",\"media_type\":\"text/plain\",\"profile\":\"subject.text/1\",\"role\":\"response\"}],\"policy_ref\":\"synthetic-policy-01\",\"profile\":\"subject.ai-decision/1\"}",
+        "review": "category-c"
+      },
+      "expected_canonical_utf8": "{\"decided_at\":\"2026-08-01T09:16:00.000Z\",\"decision\":\"category-c\",\"decision_id\":\"synthetic-chain-event-01\",\"input\":[{\"commitment_digest_hex\":\"ecd8acdf56b126e097cc06ccf0099356a85c94cf75613e8103025f7bea0827f3\",\"id\":\"prior\",\"material_nonce_hex\":\"0606060606060606060606060606060606060606060606060606060606060606\",\"media_type\":\"application/json\",\"profile\":\"subject.ai-decision/1\",\"role\":\"prior-decision\"}],\"model\":{\"id\":\"synthetic-chain-model\",\"provider\":\"synthetic-runtime\"},\"observation_scope\":\"runtime\",\"output\":[{\"commitment_digest_hex\":\"aedfbe86092f893f84f17f1842090afd4eff1cd0fc6dd61c27558fea3db30a8d\",\"id\":\"review\",\"material_nonce_hex\":\"0707070707070707070707070707070707070707070707070707070707070707\",\"media_type\":\"text/plain\",\"profile\":\"subject.text/1\",\"role\":\"response\"}],\"profile\":\"subject.ai-decision/1\"}",
+      "expected_subject_local_digest_hex": "d2287789d19737ed80cd636f2463bff2597785fad5e0254b268abedb6a7b330d",
+      "expected_commitment_digest_hex": "a15b39a512f7aba05d633b6d5453349059cd114030b4eebb06d0e8200824756a",
+      "why": "A part may itself be a conforming subject.ai-decision/1 record."
+    }
+  ],
+  "positive_cases": [
+    {
+      "name": "multimodal-synthetic",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_canonical_bytes_utf8": "{\"context\":{\"sample_ref\":\"synthetic-sample-01\"},\"decided_at\":\"2026-06-17T10:30:00.000Z\",\"decision\":\"category-a\",\"decision_id\":\"synthetic-event-01\",\"input\":[{\"commitment_digest_hex\":\"47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2\",\"id\":\"prompt\",\"material_nonce_hex\":\"0101010101010101010101010101010101010101010101010101010101010101\",\"media_type\":\"text/plain\",\"profile\":\"subject.text/1\",\"role\":\"prompt\"},{\"commitment_digest_hex\":\"e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da\",\"id\":\"image\",\"material_nonce_hex\":\"0202020202020202020202020202020202020202020202020202020202020202\",\"media_type\":\"image/png\",\"profile\":\"subject.binary/1\",\"role\":\"image\"}],\"model\":{\"id\":\"synthetic-model\",\"provider\":\"synthetic-runtime\",\"version\":\"synthetic-model-v1\"},\"observation_scope\":\"client\",\"output\":[{\"commitment_digest_hex\":\"0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146\",\"id\":\"answer\",\"material_nonce_hex\":\"0303030303030303030303030303030303030303030303030303030303030303\",\"media_type\":\"text/plain\",\"profile\":\"subject.text/1\",\"role\":\"response\"}],\"parameters\":{\"temperature\":\"0.0\"},\"profile\":\"subject.ai-decision/1\",\"started_at\":\"2026-06-17T10:29:58.000Z\"}",
+      "expected_digest_hex": "40efb366c17f72ab0ab1b7b65ac5b5006cfa2b9d1cb9c67c71dfb874967da658"
+    },
+    {
+      "name": "runtime-synthetic",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-runtime-event-01",
+        "decided_at": "2026-08-01T09:15:00.000Z",
+        "model": {
+          "id": "synthetic-runtime-model",
+          "provider": "synthetic-runtime"
+        },
+        "observation_scope": "runtime",
+        "input": [
+          {
+            "id": "features",
+            "role": "features",
+            "media_type": "application/octet-stream",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0404040404040404040404040404040404040404040404040404040404040404",
+            "commitment_digest_hex": "8cdf02f88d4b72c751727f06214b82a63780c92338877ec8fb2739245d4d1e6f"
+          }
+        ],
+        "output": [
+          {
+            "id": "outcome",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0505050505050505050505050505050505050505050505050505050505050505",
+            "commitment_digest_hex": "b316da61fb11069a1ffa4f86bc24c2a398e2e126db62ac95ae4f23350d78c55b"
+          }
+        ],
+        "decision": "category-b",
+        "actor_id": "synthetic-actor-01",
+        "policy_ref": "synthetic-policy-01"
+      },
+      "expected_canonical_bytes_utf8": "{\"actor_id\":\"synthetic-actor-01\",\"decided_at\":\"2026-08-01T09:15:00.000Z\",\"decision\":\"category-b\",\"decision_id\":\"synthetic-runtime-event-01\",\"input\":[{\"commitment_digest_hex\":\"8cdf02f88d4b72c751727f06214b82a63780c92338877ec8fb2739245d4d1e6f\",\"id\":\"features\",\"material_nonce_hex\":\"0404040404040404040404040404040404040404040404040404040404040404\",\"media_type\":\"application/octet-stream\",\"profile\":\"subject.binary/1\",\"role\":\"features\"}],\"model\":{\"id\":\"synthetic-runtime-model\",\"provider\":\"synthetic-runtime\"},\"observation_scope\":\"runtime\",\"output\":[{\"commitment_digest_hex\":\"b316da61fb11069a1ffa4f86bc24c2a398e2e126db62ac95ae4f23350d78c55b\",\"id\":\"outcome\",\"material_nonce_hex\":\"0505050505050505050505050505050505050505050505050505050505050505\",\"media_type\":\"text/plain\",\"profile\":\"subject.text/1\",\"role\":\"response\"}],\"policy_ref\":\"synthetic-policy-01\",\"profile\":\"subject.ai-decision/1\"}",
+      "expected_digest_hex": "796281b94b4c9b864f636f53f984c0ab917d35775341689f98e47b66e334f551"
+    },
+    {
+      "name": "chained-decision",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-chain-event-01",
+        "decided_at": "2026-08-01T09:16:00.000Z",
+        "model": {
+          "id": "synthetic-chain-model",
+          "provider": "synthetic-runtime"
+        },
+        "observation_scope": "runtime",
+        "input": [
+          {
+            "id": "prior",
+            "role": "prior-decision",
+            "media_type": "application/json",
+            "profile": "subject.ai-decision/1",
+            "material_nonce_hex": "0606060606060606060606060606060606060606060606060606060606060606",
+            "commitment_digest_hex": "ecd8acdf56b126e097cc06ccf0099356a85c94cf75613e8103025f7bea0827f3"
+          }
+        ],
+        "output": [
+          {
+            "id": "review",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0707070707070707070707070707070707070707070707070707070707070707",
+            "commitment_digest_hex": "aedfbe86092f893f84f17f1842090afd4eff1cd0fc6dd61c27558fea3db30a8d"
+          }
+        ],
+        "decision": "category-c"
+      },
+      "expected_canonical_bytes_utf8": "{\"decided_at\":\"2026-08-01T09:16:00.000Z\",\"decision\":\"category-c\",\"decision_id\":\"synthetic-chain-event-01\",\"input\":[{\"commitment_digest_hex\":\"ecd8acdf56b126e097cc06ccf0099356a85c94cf75613e8103025f7bea0827f3\",\"id\":\"prior\",\"material_nonce_hex\":\"0606060606060606060606060606060606060606060606060606060606060606\",\"media_type\":\"application/json\",\"profile\":\"subject.ai-decision/1\",\"role\":\"prior-decision\"}],\"model\":{\"id\":\"synthetic-chain-model\",\"provider\":\"synthetic-runtime\"},\"observation_scope\":\"runtime\",\"output\":[{\"commitment_digest_hex\":\"aedfbe86092f893f84f17f1842090afd4eff1cd0fc6dd61c27558fea3db30a8d\",\"id\":\"review\",\"material_nonce_hex\":\"0707070707070707070707070707070707070707070707070707070707070707\",\"media_type\":\"text/plain\",\"profile\":\"subject.text/1\",\"role\":\"response\"}],\"profile\":\"subject.ai-decision/1\"}",
+      "expected_digest_hex": "d2287789d19737ed80cd636f2463bff2597785fad5e0254b268abedb6a7b330d"
+    }
+  ],
+  "negative_cases": [
+    {
+      "name": "missing decision_id",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "invalid decision_id",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "Bad ID",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "legacy singular input",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": {
+          "id": "prompt",
+          "role": "prompt",
+          "media_type": "text/plain",
+          "profile": "subject.text/1",
+          "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+          "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+        },
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "duplicate part id",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "prompt",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "empty role",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "uppercase media type",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "Text/Plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "media type parameters",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain; charset=utf-8",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "unadmitted part profile",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.collection/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "malformed material nonce",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "malformed part commitment",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "duplicate material nonce",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "legacy raw digest",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2",
+            "digest_hex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "issuer-provided local digest",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2",
+            "subject_local_digest_hex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "invalid Gregorian date",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-02-29T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "missing milliseconds",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "one-digit millisecond precision",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.1Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "two-digit millisecond precision",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.12Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "four-digit millisecond precision",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.0000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "non-UTC timestamp",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T12:30:00+02:00",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "started_at missing canonical milliseconds",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "started after decision",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:30:00.001Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "nested context",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "nested": {
+            "x": "1"
+          }
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "JSON number",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": 0
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "no parts",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [],
+        "output": [],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "empty input",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "empty output",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "empty decision",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "synthetic-model",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": ""
+      },
+      "expected_outcome": "REJECTED"
+    },
+    {
+      "name": "empty model id",
+      "decision_record": {
+        "profile": "subject.ai-decision/1",
+        "decision_id": "synthetic-event-01",
+        "decided_at": "2026-06-17T10:30:00.000Z",
+        "started_at": "2026-06-17T10:29:58.000Z",
+        "model": {
+          "id": "",
+          "provider": "synthetic-runtime",
+          "version": "synthetic-model-v1"
+        },
+        "observation_scope": "client",
+        "parameters": {
+          "temperature": "0.0"
+        },
+        "context": {
+          "sample_ref": "synthetic-sample-01"
+        },
+        "input": [
+          {
+            "id": "prompt",
+            "role": "prompt",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+            "commitment_digest_hex": "47cfbd8b8cd719f31e5918f01c5328c287aaf2aafcdab5e3d4eed5a8d7ad15d2"
+          },
+          {
+            "id": "image",
+            "role": "image",
+            "media_type": "image/png",
+            "profile": "subject.binary/1",
+            "material_nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+            "commitment_digest_hex": "e2b48cae5427409c9193bfc8ef3132abc5dd37c3260f56580a016d7db1d0b3da"
+          }
+        ],
+        "output": [
+          {
+            "id": "answer",
+            "role": "response",
+            "media_type": "text/plain",
+            "profile": "subject.text/1",
+            "material_nonce_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+            "commitment_digest_hex": "0c589331c4bbfb80fe5d0d9182207a2c11df10e11d3b239237f7103b239ba146"
+          }
+        ],
+        "decision": "category-a"
+      },
+      "expected_outcome": "REJECTED"
+    }
+  ]
+}

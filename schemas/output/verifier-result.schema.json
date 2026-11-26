@@ -1,0 +1,473 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://certcrypt.com/schemas/verifier-result.schema.json",
+  "title": "CERTCRYPT Verifier Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "result_code",
+    "verification_target_requested",
+    "verification_target_resolved",
+    "verification_target",
+    "input_mode",
+    "production_verification",
+    "domain_valid",
+    "rules_domain_valid",
+    "issued_valid",
+    "independent_valid",
+    "proof_complete",
+    "complete_verification_against_original_material_performed",
+    "complete_verification_against_original_material_passed",
+    "failure_reason",
+    "failed_check_ids",
+    "required_artifacts_missing",
+    "applicable_rules_version",
+    "system_id",
+    "system_root_identifier",
+    "settlement_profile_id",
+    "subtree_root",
+    "settlement_ref",
+    "batch_root",
+    "batch_index",
+    "batch_size",
+    "foundation_profile_id",
+    "foundation_statement_id",
+    "foundation_publication_ref",
+    "subject_scope",
+    "attested_node",
+    "diagnostics",
+    "certcrypt_lineage",
+    "additional_verifications"
+  ],
+  "properties": {
+    "result_code": {
+      "description": "The verdict. `ISSUED_VALID` / `INDEPENDENT_VALID` mean the conditions for that target hold; the `_INVALID` forms mean they were applied and did not hold. `INCOMPLETE` means something required to decide was missing or a requested comparison could not be finished, `UNSUPPORTED` that this verifier version cannot evaluate what was presented, and `REJECTED` that the input was refused before evaluation. The taxonomy is fail-closed: the last three are not soft passes, and none of them may be read as `Independent`.",
+      "type": "string",
+      "enum": [
+        "ISSUED_VALID",
+        "ISSUED_INVALID",
+        "INDEPENDENT_VALID",
+        "INDEPENDENT_INVALID",
+        "INCOMPLETE",
+        "UNSUPPORTED",
+        "REJECTED"
+      ]
+    },
+    "verification_target_requested": {
+      "description": "The target the caller asked for. `auto` lets the verifier resolve it from what the artifact carries; `issued` and `independent` assert an expected state.",
+      "type": "string",
+      "enum": [
+        "auto",
+        "issued",
+        "independent"
+      ]
+    },
+    "verification_target_resolved": {
+      "description": "The target the verifier actually resolved and evaluated. Read this rather than the request when `auto` was used.",
+      "type": "string",
+      "enum": [
+        "Issued",
+        "Independent"
+      ]
+    },
+    "verification_target": {
+      "description": "The target the verdict applies to. Same value as `verification_target_resolved`; it is the member each fixture's expected result pins.",
+      "type": "string",
+      "enum": [
+        "Issued",
+        "Independent"
+      ]
+    },
+    "input_mode": {
+      "description": "How the artifacts were supplied: `package` for a single `verification_package`, `artifact_set` when the pieces were passed separately.",
+      "type": "string",
+      "enum": [
+        "package",
+        "artifact_set"
+      ]
+    },
+    "production_verification": {
+      "description": "True only when the verifier ran under the published production profile: the same system domain, root, rules domains and corpus commitments, settlement parameters and signature profile. False under any other configuration (a test domain, a synthetic root). Every signature is verified in both cases, so `false` does not mean authenticity went unchecked: it means a `*_VALID` result speaks for that other configuration, not for the production domain. Consumers must branch on this, not assume it.",
+      "type": "boolean"
+    },
+    "domain_valid": {
+      "description": "The system-domain axis: the artifact is attributed to the exact expected system domain and its root binding holds, with no clone or fork accepted. An axis, not an alias of `result_code` — it reports its own plane and can be true while the overall verdict is not `*_VALID`.",
+      "type": "boolean"
+    },
+    "rules_domain_valid": {
+      "description": "The rules-domain axis: the artifact resolves to the exact `rules_version` it is bound to. An axis, independent of `result_code`.",
+      "type": "boolean"
+    },
+    "issued_valid": {
+      "description": "The `Issued` axis: the base certificate is structurally valid and authentic. An axis, independent of `result_code`.",
+      "type": "boolean"
+    },
+    "independent_valid": {
+      "description": "The `Independent` axis: every check the independence plane requires passed, and the resolved target is `Independent`. Deliberately NOT an alias of `result_code === \"INDEPENDENT_VALID\"`: comparison against original material is not part of this axis, so supplying material for only some subjects makes `result_code` `INCOMPLETE` while this stays true. False on an Issued-only run, where the plane was never evaluated.",
+      "type": "boolean"
+    },
+    "proof_complete": {
+      "description": "The proof is present, structurally valid, and no required artifact was missing. An axis, independent of `result_code`.",
+      "type": "boolean"
+    },
+    "complete_verification_against_original_material_performed": {
+      "description": "True when the verifier was given original material and actually ran the comparison against it. False when no material was supplied — which is not a failure: the structural planes are verifiable without it.",
+      "type": "boolean"
+    },
+    "complete_verification_against_original_material_passed": {
+      "description": "True when the comparison was performed and the material matched what the certificate commits to. Read together with the `_performed` flag: false with `_performed` false means the comparison never ran, not that it failed.",
+      "type": "boolean"
+    },
+    "failure_reason": {
+      "description": "Human-readable reason for a non-valid verdict. Null when the verdict is valid. Diagnostic text, not a stable identifier — branch on `failed_check_ids` instead.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "failed_check_ids": {
+      "description": "Identifiers of the checks that failed, each once. The SET is normative (verifier-toolkit/1 §9.6–§9.7); the order is evaluation order and is not compared. Every identifier is one of verifier-toolkit/1 §9.7.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "INPUT_TARGET_SUPPORTED",
+          "INPUT_MODE_SUPPORTED",
+          "INPUT_COMBINATION_VALID",
+          "TARGET_AUTO_RESOLUTION_VALID",
+          "PACKAGE_STRUCTURE_VALID",
+          "PACKAGE_CONTEXT_COHERENT",
+          "BASE_CERTIFICATE_PRESENT",
+          "BASE_CERTIFICATE_STRUCTURE_VALID",
+          "BASE_CERTIFICATE_AUTHENTIC",
+          "ORIGINAL_MATERIAL_COMPARISON_VALID",
+          "PROOF_PRESENT",
+          "PROOF_VERSION_SUPPORTED",
+          "PROOF_STRUCTURE_VALID",
+          "RULES_DOMAIN_EXACT",
+          "RULES_CORPUS_COMMITMENT_PRESENT",
+          "SYSTEM_DOMAIN_EXACT",
+          "SYSTEM_ROOT_BINDING_VALID",
+          "CLONE_OR_FORK_REJECTED",
+          "PROOF_SIGNATURE_VALID",
+          "LEAF_BINDING_VALID",
+          "INCLUSION_PROOF_VALID",
+          "SETTLEMENT_REF_VALID",
+          "FINALITY_SUFFICIENT",
+          "SETTLEMENT_NOT_RETROACTIVE",
+          "COMMITMENT_TTL_VALID",
+          "NON_REPLAY_VALID",
+          "EFFECTIVE_UNITS_BINDING_VALID",
+          "CAPACITY_EVIDENCE_VALID",
+          "CAPACITY_BINDING_VALID",
+          "CAPACITY_NOT_RECONSTRUCTED",
+          "AGGREGATED_INTERPRETATION_UNIQUE",
+          "ISSUANCE_PARTICIPATION_VALID",
+          "ANTI_SPLICING_VALID",
+          "FOUNDATION_PROFILE_VALID",
+          "FOUNDATION_SYSTEM_ID_VALID",
+          "FOUNDATION_FINGERPRINT_RECOMPUTED",
+          "FOUNDATION_SIGNATURE_VALID",
+          "FOUNDATION_BOOTSTRAP_MATCHES_RULES",
+          "FOUNDATION_SUCCESSOR_QUORUM_VALID",
+          "FOUNDATION_EQUIVOCATION_DETECTED"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "required_artifacts_missing": {
+      "description": "Artifacts a decision required but that were not supplied. Non-empty here is why a verdict is `INCOMPLETE` rather than `*_INVALID`: nothing was disproved, something was absent.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "applicable_rules_version": {
+      "description": "The `rules_version` the artifact is bound to and was evaluated against. Null until it has been resolved from the artifact.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "system_id": {
+      "description": "The system domain the artifact is attributed to. Null until resolved.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "system_root_identifier": {
+      "description": "The system root the attribution chains to. Null until resolved.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "settlement_profile_id": {
+      "description": "Settlement profile under which capacity consumption was evidenced. Part of the lineage block: present so the binding is visible in the result rather than only inside the artifact.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "subtree_root": {
+      "description": "Root of the subtree the artifact's commitment sits under. Lineage, visible for inspection.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "settlement_ref": {
+      "description": "Settlement reference the operation resolved to. Lineage, visible for inspection.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "batch_root": {
+      "description": "Root of the batch the operation settled in. Lineage, visible for inspection.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "batch_index": {
+      "description": "Position of the operation within its batch. Lineage, visible for inspection.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "batch_size": {
+      "description": "Number of members in the batch the operation settled in. Lineage, visible for inspection.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "foundation_profile_id": {
+      "description": "Foundation profile of the statement that carries the system binding. Present once `system_foundation` has been validated.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "foundation_statement_id": {
+      "description": "Identifier of the validated foundation statement. Present once it has been validated.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "foundation_publication_ref": {
+      "description": "Publication reference of the foundation statement. Present once it has been validated.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "subject_scope": {
+      "description": "What the verdict covers, per subject, in anchor order. A subject submitted as one opaque input (`opaque: true` — an archive or blob) is bound as that single input, and the verdict asserts nothing about elements inside it; a declared collection (`opaque: false`) is covered at the declared resolution. Proving a container is not proving its contents, and this field is what keeps the two distinguishable. Null until the base certificate is parsed.",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "profile",
+          "opaque"
+        ],
+        "properties": {
+          "profile": {
+            "type": "string"
+          },
+          "opaque": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "attested_node": {
+      "description": "The node the Proof of Independence attests (`independence.proof/1` §10.15): the recognized node the submission entered through and the instant its recognition was checked, authenticated by the proof signature. Set only when `result_code` is `INDEPENDENT_VALID`; null otherwise and when the proof carries no attestation. It names a transport, not the issuer, and asserts nothing about the certified content.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "node_id",
+        "recognized_at"
+      ],
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "pattern": "^op:[A-Za-z0-9+/]{22}$"
+        },
+        "recognized_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+        }
+      }
+    },
+    "diagnostics": {
+      "description": "Ordered diagnostics emitted during evaluation, each with a level and, where applicable, the check it belongs to. Informative: the verdict is `result_code`, not the absence of diagnostics.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "level",
+          "message"
+        ],
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "info",
+              "warning",
+              "error"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "check_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "certcrypt_lineage": {
+      "description": "Already-validated CERTCRYPT binding, projected into a compact consumer-readable form. A secondary view of values proven elsewhere in this result, not an independent assertion.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "certcrypt_domain_bound",
+        "independence_under_certcrypt_rules",
+        "settlement_bound",
+        "capacity_consumption_bound",
+        "history_bound_under_certcrypt",
+        "system_id",
+        "rules_version",
+        "system_root_fingerprint",
+        "settlement_profile_id",
+        "subtree_root",
+        "settlement_ref",
+        "foundation_profile_id",
+        "foundation_statement_id"
+      ],
+      "properties": {
+        "certcrypt_domain_bound": {
+          "type": "boolean"
+        },
+        "independence_under_certcrypt_rules": {
+          "type": "boolean"
+        },
+        "settlement_bound": {
+          "type": "boolean"
+        },
+        "capacity_consumption_bound": {
+          "type": "boolean"
+        },
+        "history_bound_under_certcrypt": {
+          "type": "boolean"
+        },
+        "system_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rules_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "system_root_fingerprint": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "settlement_profile_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subtree_root": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "settlement_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "foundation_profile_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "foundation_statement_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "additional_verifications": {
+      "description": "Outcomes surfaced separately from the check list: the ML-DSA-65 component of the base certificate's composite signature. The component itself is normative: a certificate whose ML-DSA-65 half is absent, malformed or fails to verify does not reach `BASE_CERTIFICATE_AUTHENTIC`. This field reports that component's outcome on its own; it does not make it optional, and nothing here alters `result_code` independently of the check it belongs to.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pqc_base_certificate_authentic"
+      ],
+      "properties": {
+        "pqc_base_certificate_authentic": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "performed",
+            "algorithm",
+            "passed",
+            "reason"
+          ],
+          "properties": {
+            "performed": {
+              "type": "boolean"
+            },
+            "algorithm": {
+              "type": "string",
+              "const": "ML-DSA-65"
+            },
+            "passed": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "reason": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

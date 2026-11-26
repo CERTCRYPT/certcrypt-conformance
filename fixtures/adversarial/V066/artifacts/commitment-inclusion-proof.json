@@ -1,0 +1,9 @@
+{
+  "commitment_id": "7c038323e3e7a0b660482244b0da13ff3607556336e70d7d975c91758dba3c6b",
+  "commitment_leaf_hash": "394711b5a36f0c21d433961f14ee50cc45d09e7edcc12c658fe6564c58435fca",
+  "commitment_index": "0",
+  "commitment_siblings": [
+    "6c0283878417068ba757fdaa0810c9ad95b18463924d782f2e5ea57944fbf1ec"
+  ],
+  "subtree_size": "2"
+}

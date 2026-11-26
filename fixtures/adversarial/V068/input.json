@@ -1,0 +1,7 @@
+{
+  "verification_target_requested": "auto",
+  "input_mode": "artifact_set",
+  "base_certificate_path": "artifacts/base-certificate.json",
+  "capacity_evidence_path": "artifacts/capacity-evidence.json",
+  "commitment_inclusion_proof_path": "artifacts/commitment-inclusion-proof.json"
+}

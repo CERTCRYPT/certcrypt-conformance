@@ -1,0 +1,94 @@
+{
+  "primitive": "subject_text_canonicalization",
+  "description": "canonical_bytes(subject) for subject.text/1 (verifier-toolkit/1 §8.5 + subject.text/1 §11): operate on the RAW input bytes (the subject context is opaque bytes per CCCP/1 §6.2; CCCP/1 §5.1 UTF-8/BOM rules do NOT apply here). Step 1 (§11.2): normalize line endings to CRLF in a single left-to-right pass over the original bytes — CRLF takes precedence, then lone CR -> CRLF, then lone LF -> CRLF. Step 2 (§11.3): strip the maximal trailing run of CRLF, then append exactly one CRLF. Everything else is byte-preserved: no UTF-8 validation, no Unicode normalization, no BOM stripping, embedded NUL preserved. subject_local_digest_hex = SHA3-256(canonical_bytes). These vectors pin the bytes so any toolkit in any language converges.",
+  "profile": "subject.text/1",
+  "canonicalization": "§11.2 line-ending normalization (single pass, CRLF longest-match) then §11.3 trailing-CRLF collapse to exactly one CRLF; all other bytes preserved exactly",
+  "digest": "subject_local_digest_hex = SHA3-256(canonical_bytes), 32 bytes lowercase hex; verifier-local, never published",
+  "byte_notation": "input_hex and canonical_hex are space-free lowercase hex of the raw byte sequence",
+  "vectors": [
+    {
+      "name": "empty -> one CRLF",
+      "input_hex": "",
+      "canonical_hex": "0d0a",
+      "subject_local_digest_hex": "e7a9cc349f9261df84cf833b3228d6318b74c32dbeae45da889b8475477fe7a3"
+    },
+    {
+      "name": "bare 'a' gains trailing CRLF",
+      "input_hex": "61",
+      "canonical_hex": "610d0a",
+      "subject_local_digest_hex": "0cb42d4c43addda431edd96e657a684bd31b6a85479706a3d7dc22377cd65092"
+    },
+    {
+      "name": "'a' + lone LF -> 'a' + CRLF",
+      "input_hex": "610a",
+      "canonical_hex": "610d0a",
+      "subject_local_digest_hex": "0cb42d4c43addda431edd96e657a684bd31b6a85479706a3d7dc22377cd65092"
+    },
+    {
+      "name": "'a' + lone CR -> 'a' + CRLF",
+      "input_hex": "610d",
+      "canonical_hex": "610d0a",
+      "subject_local_digest_hex": "0cb42d4c43addda431edd96e657a684bd31b6a85479706a3d7dc22377cd65092"
+    },
+    {
+      "name": "'a' + CRLF preserved",
+      "input_hex": "610d0a",
+      "canonical_hex": "610d0a",
+      "subject_local_digest_hex": "0cb42d4c43addda431edd96e657a684bd31b6a85479706a3d7dc22377cd65092"
+    },
+    {
+      "name": "only CRLF CRLF -> one CRLF",
+      "input_hex": "0d0a0d0a",
+      "canonical_hex": "0d0a",
+      "subject_local_digest_hex": "e7a9cc349f9261df84cf833b3228d6318b74c32dbeae45da889b8475477fe7a3"
+    },
+    {
+      "name": "'a' + LF LF -> 'a' + one CRLF (trailing run collapses)",
+      "input_hex": "610a0a",
+      "canonical_hex": "610d0a",
+      "subject_local_digest_hex": "0cb42d4c43addda431edd96e657a684bd31b6a85479706a3d7dc22377cd65092"
+    },
+    {
+      "name": "CR CR -> one CRLF (both are trailing)",
+      "input_hex": "0d0d",
+      "canonical_hex": "0d0a",
+      "subject_local_digest_hex": "e7a9cc349f9261df84cf833b3228d6318b74c32dbeae45da889b8475477fe7a3"
+    },
+    {
+      "name": "CR CRLF (0d 0d 0a): §11.2 precedence -> lone CR then CRLF = two breaks -> one CRLF",
+      "input_hex": "0d0d0a",
+      "canonical_hex": "0d0a",
+      "subject_local_digest_hex": "e7a9cc349f9261df84cf833b3228d6318b74c32dbeae45da889b8475477fe7a3"
+    },
+    {
+      "name": "LF CR (0a 0d): two line breaks, not one -> one CRLF",
+      "input_hex": "0a0d",
+      "canonical_hex": "0d0a",
+      "subject_local_digest_hex": "e7a9cc349f9261df84cf833b3228d6318b74c32dbeae45da889b8475477fe7a3"
+    },
+    {
+      "name": "'a' CRLF 'b' -> internal CRLF kept, trailing CRLF appended",
+      "input_hex": "610d0a62",
+      "canonical_hex": "610d0a620d0a",
+      "subject_local_digest_hex": "c591e780a2939c4593c58641c24dd5867a4b9f9b1854e563238a33de3fce9a8d"
+    },
+    {
+      "name": "leading BOM preserved (not stripped)",
+      "input_hex": "efbbbf61",
+      "canonical_hex": "efbbbf610d0a",
+      "subject_local_digest_hex": "7858f2ac8d2e2d6d048cd4fcb86335abfb355c5542e8e4fdb6d8ce89d8df81b4"
+    },
+    {
+      "name": "embedded NUL preserved",
+      "input_hex": "610062",
+      "canonical_hex": "6100620d0a",
+      "subject_local_digest_hex": "b89e85ade8316c1ffbe5101027dade63ca3246919f013ef132c74d1e8522613a"
+    }
+  ],
+  "must_hold": [
+    "line-ending normalization is a single left-to-right pass over the ORIGINAL bytes; CRLF matches before lone CR / lone LF",
+    "exactly one trailing CRLF in the output; an empty or all-CRLF input canonicalizes to exactly one CRLF",
+    "no UTF-8 validation, no Unicode normalization (NFC/NFD), no BOM stripping, no whitespace trimming, embedded NUL preserved",
+    "subject_local_digest_hex = SHA3-256(canonical_bytes), verifier-local, never published in a certificate"
+  ]
+}

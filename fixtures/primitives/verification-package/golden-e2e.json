@@ -1,0 +1,171 @@
+{
+  "expected_package_digest": "2544bf5c88ffcbb9571b829856108d45d744a275fa07bdf20de99133a3b73696",
+  "package": {
+    "base_certificate": {
+      "note": "opaque transport fixture",
+      "schema": "certcrypt-certificate"
+    },
+    "capacity_evidence": {
+      "commitment_signature_b64": "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",
+      "operation_key": {
+        "inclusion_proof": [
+          "a66f66ca2108cfbb3f597c8cad0e1f18fd238f7476e98f6825d33c86f24fcbc3",
+          "ba19cc12c6cabf584b594e7d363f3986623c8bd77db56bb33075f3bcaeed53ac"
+        ],
+        "leaf_index": 2,
+        "public_key_b64": "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",
+        "tree_size": 4
+      },
+      "operation_salt_hex": "766572696669636174696f6e2d7061636b6167652d676f6c64656e2d73616c74",
+      "profile": "zero-data.unlinkable",
+      "projected_authorization": {
+        "authorization_issuer_kid": "system-domain-kid-1",
+        "authorization_pseudonym": "e500ead9388741f027d22873ebc293077990b620f333de1190c7847d1332b037",
+        "authorized_role": "capacity_commitment_holder",
+        "holder_key_set_root": "f1e6e28150b901b5eed9eb3a33b3a8896501328f7499c38503517fbb46a9769d",
+        "holder_pseudonym": "106ddf71d0bc3f8c073d2f20c4a665b7cc708c0bdf35938417ad0be5e0e322ce",
+        "level1_binding": {
+          "authorization_issuer_kid": "system-domain-kid-1",
+          "authorized_role": "capacity_commitment_holder",
+          "holder_key_set_root": "f1e6e28150b901b5eed9eb3a33b3a8896501328f7499c38503517fbb46a9769d",
+          "rules_version": "rules/conformance",
+          "system_id": "certcrypt",
+          "system_root_fingerprint": "12e236790358eeae049c2a8f8be4b0005f2f0e108a2f4d3df9e7ea73ec20b334",
+          "valid_from": "2026-01-01T00:00:00Z",
+          "valid_until": "2027-01-01T00:00:00Z"
+        },
+        "level1_signature": {
+          "alg": "certcrypt-composite-p256-mldsa65-v1",
+          "mode": "AND",
+          "signatures": [
+            {
+              "alg": "ECDSA-P256-SHA3-256",
+              "encoding": "raw-rs-64",
+              "low_s": true,
+              "sig_b64": "jBNvk+ozVesldhBX04w9ALT8jidTms9YNmEMwCloo8RvA8fQFbK7IigUs5OYafuHqyiaKINC1l8Bdwc5YKS6zA=="
+            },
+            {
+              "alg": "ML-DSA-65",
+              "sig_b64": "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"
+            }
+          ]
+        },
+        "rules_version": "rules/conformance",
+        "system_id": "certcrypt",
+        "system_root_fingerprint": "12e236790358eeae049c2a8f8be4b0005f2f0e108a2f4d3df9e7ea73ec20b334",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2027-01-01T00:00:00Z"
+      },
+      "projected_commitment": {
+        "authorization_pseudonym": "e500ead9388741f027d22873ebc293077990b620f333de1190c7847d1332b037",
+        "certificate_commitment_digest": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+        "commitment_version": "capacity.commitment/1",
+        "consumed_quantity": "1.00",
+        "declared_effective_units": "1",
+        "expires_at": "2026-07-15T12:00:00Z",
+        "holder_pseudonym": "106ddf71d0bc3f8c073d2f20c4a665b7cc708c0bdf35938417ad0be5e0e322ce",
+        "issued_at": "2026-06-15T12:00:00Z",
+        "pool_pseudonym": "b03df02d205574cdcfdb05b12b013822869e1dbf23cdb20580c8ca6ff0f4282d",
+        "rules_version": "rules/conformance",
+        "system_id": "certcrypt",
+        "system_root_fingerprint": "12e236790358eeae049c2a8f8be4b0005f2f0e108a2f4d3df9e7ea73ec20b334"
+      }
+    },
+    "commitment_inclusion_proof": {
+      "commitment_id": "1111111111111111111111111111111111111111111111111111111111111111",
+      "commitment_index": "0",
+      "commitment_leaf_hash": "7170c1391b7847f71d8e55f80c60b5e7db878d8bca620f84300cf371cad08a2f",
+      "commitment_siblings": [
+        "0e25ba3e3a4ef83cd1e872cfbf11c542b51ef481ffb02e1c15d511830080d135"
+      ],
+      "subtree_size": "2"
+    },
+    "independence_proof": {
+      "note": "opaque transport fixture — node never reinterprets this",
+      "schema": "independence.proof/1"
+    },
+    "settlement_material": {
+      "authorization_bridge_proofs": [
+        {
+          "batch_binding_preimage": {
+            "batch_id": "batch-VPKG",
+            "leaf_count": "2",
+            "rules_version": "rules/conformance",
+            "settlement_profile_id": "settlement.aggregated.xrpl/1",
+            "settlement_root": "8ba334e9479dcce0894b8c6e529e9455b40a63273d149f721822a306d255e469",
+            "system_id": "certcrypt",
+            "total_quantity": "2.00",
+            "v": "ccab1",
+            "window_id": "window-VPKG"
+          },
+          "consumed_quantity": "1.00",
+          "cost_commitment": "9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c",
+          "resolved_authorization_digest": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+        }
+      ],
+      "batch_manifest": {
+        "batch_id": "batch-VPKG",
+        "leaf_count": "2",
+        "rules_version": "rules/conformance",
+        "settlement_profile_id": "settlement.aggregated.xrpl/1",
+        "settlement_root": "8ba334e9479dcce0894b8c6e529e9455b40a63273d149f721822a306d255e469",
+        "system_id": "certcrypt",
+        "total_quantity": "2.00",
+        "window_id": "window-VPKG"
+      },
+      "capacity_consumption_proof": {
+        "leaf_quantity": "1.00",
+        "token_contract": "00000000C1F0A0E6E5F1D7B4A9C8E3F2D1B0A9C8E7F6D5C4",
+        "token_symbol": "CERT",
+        "total_quantity": "2.00"
+      },
+      "coherence_material": {
+        "rules_version": "rules/conformance",
+        "settlement_profile_id": "settlement.aggregated.xrpl/1",
+        "system_id": "certcrypt"
+      },
+      "finality_proof": {
+        "block_id": "blk-VPKG",
+        "block_num": "1000",
+        "block_timestamp": "2026-06-15T12:00:00Z",
+        "last_irreversible_block_id": "blk-VPKG",
+        "last_irreversible_block_num": "1000"
+      },
+      "settlement_action": {
+        "action_ordinal": "0",
+        "chain_id": "xrpl-network-conformance",
+        "contract": "00000000C1F0A0E6E5F1D7B4A9C8E3F2D1B0A9C8E7F6D5C4",
+        "from": "rCONFORMANCEpOOLaccountXXXXXXXXXXXX",
+        "memo": "ccab1:3a1e9a78e8e4d6ceee9b7892460ccf5ab09c76a8a7a863e9f377485e0f279c29",
+        "name": "payment",
+        "quantity": "2.00 CERT",
+        "trx_id": "trx-VPKG"
+      },
+      "settlement_profile_id": "settlement.aggregated.xrpl/1",
+      "submission_assignment_proof": {
+        "leaf_hash": "b8334705bae7b381911d42dbd6f40bd5990d16ef2c4c08cb301121dd50f4692f",
+        "leaf_index": "0",
+        "leaf_preimage": {
+          "batch_id": "batch-VPKG",
+          "consumed_quantity": "1.00",
+          "cost_commitment": "9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c",
+          "leaf_index": "0",
+          "rules_version": "rules/conformance",
+          "settlement_profile_id": "settlement.aggregated.xrpl/1",
+          "subtree_root": "5ea96eee73d0443219c1b2a6a8fb00448219229c32d783aa3254535d199fa8b0",
+          "system_id": "certcrypt",
+          "v": "ccab1-leaf"
+        },
+        "sibling_hashes": [
+          "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        ],
+        "subtree_root": "5ea96eee73d0443219c1b2a6a8fb00448219229c32d783aa3254535d199fa8b0"
+      }
+    },
+    "settlement_reference": "xrpl-network-conformance:trx-VPKG:0:batch-VPKG:window-VPKG",
+    "verification_context": {
+      "rules_version": "rules/conformance",
+      "system_id": "certcrypt"
+    }
+  }
+}

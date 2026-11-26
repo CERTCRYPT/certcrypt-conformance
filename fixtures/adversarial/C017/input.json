@@ -1,0 +1,5 @@
+{
+  "verification_target_requested": "issued",
+  "input_mode": "artifact_set",
+  "base_certificate_path": "artifacts/base-certificate.json"
+}

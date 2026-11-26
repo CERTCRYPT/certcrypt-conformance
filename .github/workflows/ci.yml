@@ -1,0 +1,56 @@
+# CI for certcrypt-conformance — the data-only contract repository.
+#
+# This repo holds no verifier and runs no verifier: it is data. What CI checks is
+# that the data is internally consistent — that the frozen schemas are valid, that
+# every fixture request conforms to them, and that the generator still reproduces
+# the committed fixtures byte-for-byte. That last one is the property the whole
+# contract rests on (see generator/DETERMINISM.md).
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    name: Schemas and fixture determinism
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: generator/requirements.txt
+
+      - name: Install pinned generator dependencies
+        # Pinned on purpose: the fixtures are only reproducible against the exact
+        # signature libraries that produced them (generator/requirements.txt).
+        run: pip install -r generator/requirements.txt
+
+      - name: Schemas are valid, and every fixture request conforms
+        run: PYTHONPATH=. python generator/validate_schemas.py
+
+      - name: The generator reproduces the committed fixtures byte-for-byte
+        # Determinism is the contract's load-bearing property: every signature
+        # scheme used is deterministic, so a regenerated tree must be identical to
+        # the committed one. A diff here means either the generator drifted or a
+        # fixture was hand-edited — both are defects, and both are invisible
+        # without this check.
+        run: |
+          PYTHONPATH=. python generator/generate_fixtures.py
+          if ! git diff --exit-code --stat -- fixtures/; then
+            echo "::error::Regenerating the fixtures produced a different tree." \
+                 "Either the generator changed behaviour, or a fixture was edited" \
+                 "by hand. See generator/DETERMINISM.md."
+            exit 1
+          fi

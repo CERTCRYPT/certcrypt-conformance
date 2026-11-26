@@ -1,0 +1,56 @@
+{
+  "primitive": "operation_scoped_pseudonym",
+  "description": "pseudonym = SHA3-256( frame(operation_salt) || frame(domain_tag) || frame(stable_id) ), 32-byte output as lowercase hex. Each field is absorbed with an 8-byte big-endian length prefix (framing) so field boundaries are unambiguous.",
+  "kdf": "SHA3-256",
+  "output_len_bytes": 32,
+  "framing": "each absorbed field is prefixed with its length as u64 big-endian",
+  "domain_tags": ["holder", "pool", "authorization"],
+  "vectors": [
+    {
+      "name": "holder under salt-1",
+      "operation_salt_utf8": "operation-salt-1",
+      "domain": "holder",
+      "stable_id": "holder:example",
+      "expected_pseudonym_hex": "d87afe819c6c6a6224c79bb3024e4240f627962cec768987b882a715d991b8a2"
+    },
+    {
+      "name": "pool under salt-1",
+      "operation_salt_utf8": "operation-salt-1",
+      "domain": "pool",
+      "stable_id": "pool:default",
+      "expected_pseudonym_hex": "ec352a2770318d4643a8d00e55318017c4bf67fa9577f1b1562a67b5a7bc9330"
+    },
+    {
+      "name": "authorization under salt-1",
+      "operation_salt_utf8": "operation-salt-1",
+      "domain": "authorization",
+      "stable_id": "auth:abc123",
+      "expected_pseudonym_hex": "d9540c5b1e94592371828f1511e16e920b5efaaf01ed292aa0c1de2a64dc50b0"
+    },
+    {
+      "name": "same holder id, different salt -> unlinkable (must differ from vector 1)",
+      "operation_salt_utf8": "operation-salt-2",
+      "domain": "holder",
+      "stable_id": "holder:example",
+      "expected_pseudonym_hex": "c71766b44b6e020b49283ecc1e6db6c182fb3a07a978e31c45d91b8b633df902"
+    },
+    {
+      "name": "framing case A: salt=ab id=c",
+      "operation_salt_utf8": "ab",
+      "domain": "holder",
+      "stable_id": "c",
+      "expected_pseudonym_hex": "efc91893f81f5b71e0bd17e070550d6f86627440e6f381d76815898b3ad07eec"
+    },
+    {
+      "name": "framing case B: salt=a id=bc — MUST differ from case A (an implementation without length-framing would collide these)",
+      "operation_salt_utf8": "a",
+      "domain": "holder",
+      "stable_id": "bc",
+      "expected_pseudonym_hex": "d7fea1a1495e821d8ddf95176171af28bd2ea15e8cef57fd1c6b8f85caf9389a"
+    }
+  ],
+  "must_hold": [
+    "vector 1 != vector 4 (same holder id, fresh salt -> unlinkable)",
+    "framing case A != framing case B (length-framing prevents boundary collision)"
+  ]
+}

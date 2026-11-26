@@ -1,0 +1,7 @@
+{
+  "result_code": "ISSUED_INVALID",
+  "verification_target": "Issued",
+  "failed_check_ids": [
+    "ORIGINAL_MATERIAL_COMPARISON_VALID"
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "schema": "submission-set/1",
+  "system_id": "certcrypt",
+  "rules_version": "rules/conformance",
+  "system_root_fingerprint": "abababababababababababababababababababababababababababababababab",
+  "submission_set_id": "3f812b171aed489b8420403f914beb995061ee3c199619e3ad44fb25e7359930",
+  "closure_time": "2026-06-15T12:00:00Z",
+  "certificates": [
+    {
+      "capacity_evidence": {
+        "profile": "zero-data.unlinkable",
+        "operation_salt_hex": "aaaaaaaaaaaaaaaa",
+        "projected_authorization": {
+          "system_id": "certcrypt",
+          "rules_version": "rules/conformance",
+          "system_root_fingerprint": "abababababababababababababababababababababababababababababababab",
+          "authorized_role": "capacity_commitment_holder",
+          "authorization_issuer_kid": "system-domain-kid-1",
+          "valid_from": "2026-01-01T00:00:00Z",
+          "valid_until": "2099-01-01T00:00:00Z",
+          "holder_key_set_root": "1111111111111111111111111111111111111111111111111111111111111111",
+          "level1_binding": {
+            "system_id": "certcrypt",
+            "rules_version": "rules/conformance",
+            "system_root_fingerprint": "abababababababababababababababababababababababababababababababab",
+            "authorized_role": "capacity_commitment_holder",
+            "authorization_issuer_kid": "system-domain-kid-1",
+            "valid_from": "2026-01-01T00:00:00Z",
+            "valid_until": "2099-01-01T00:00:00Z",
+            "holder_key_set_root": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "level1_signature": {
+            "alg": "certcrypt-composite-p256-mldsa65-v1",
+            "mode": "AND",
+            "signatures": [
+              {
+                "alg": "ECDSA-P256-SHA3-256",
+                "encoding": "raw-rs-64",
+                "low_s": true,
+                "sig_b64": "QUFBQQ=="
+              },
+              {
+                "alg": "ML-DSA-65",
+                "sig_b64": "QUFBQQ=="
+              }
+            ]
+          },
+          "authorization_pseudonym": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "holder_pseudonym": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "projected_commitment": {
+          "commitment_version": "capacity.commitment/1",
+          "system_id": "certcrypt",
+          "system_root_fingerprint": "abababababababababababababababababababababababababababababababab",
+          "rules_version": "rules/conformance",
+          "authorization_pseudonym": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "holder_pseudonym": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "pool_pseudonym": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "certificate_commitment_digest": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+          "consumed_quantity": "1",
+          "declared_effective_units": "1",
+          "issued_at": "2026-06-15T12:00:00Z",
+          "expires_at": "2026-07-15T12:00:00Z"
+        },
+        "operation_key": {
+          "leaf_index": 0,
+          "public_key_b64": "QkJCQg==",
+          "inclusion_proof": [],
+          "tree_size": 1
+        },
+        "commitment_signature_b64": "Q0NDQw=="
+      },
+      "operative": {
+        "holder_id": "holder:6ba7b811-9dad-41d4-a716-446655440000",
+        "pool_id": "default"
+      }
+    }
+  ]
+}

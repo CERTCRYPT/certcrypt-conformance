@@ -1,0 +1,16 @@
+{
+  "result_code": "INDEPENDENT_VALID",
+  "verification_target": "Independent",
+  "failed_check_ids": [],
+  "certcrypt_lineage": {
+    "certcrypt_domain_bound": true,
+    "independence_under_certcrypt_rules": true,
+    "settlement_bound": true,
+    "capacity_consumption_bound": true,
+    "history_bound_under_certcrypt": true
+  },
+  "attested_node": {
+    "node_id": "op:Q29uZm9ybWFuY2VOb2RlMQ",
+    "recognized_at": "2026-04-11T12:00:00Z"
+  }
+}

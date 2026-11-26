@@ -1,0 +1,15 @@
+[
+  {
+    "material_file": "material-0.bin",
+    "materials": [
+      {
+        "id": "prompt",
+        "material_file": "nested-0-0.bin"
+      },
+      {
+        "id": "answer",
+        "material_file": "nested-0-1.bin"
+      }
+    ]
+  }
+]

@@ -1,0 +1,6 @@
+# V061 — Settlement Quantity `0.00 CERT`
+
+settlement_action.quantity is `0.00 CERT`: zero, which settles nothing. The quantity is
+`<integer>.<2 digits> CERT` and strictly positive
+(settlement.aggregated.xrpl/1 §9.3).
+Expected: INDEPENDENT_INVALID (CAPACITY_BINDING_VALID)

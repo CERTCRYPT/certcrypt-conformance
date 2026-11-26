@@ -1,0 +1,28 @@
+{
+  "label": "two-leaf balanced tree",
+  "commitment_scheme": "collection.merkle-sha3-256/1",
+  "leaf_profile": "subject.binary/1",
+  "declared_cardinality": "2",
+  "leaves_hex": [
+    "7630323a30",
+    "7630323a31"
+  ],
+  "root": "d1170f278ab4fa323fcfd6ada7379338fa2994ea73a7596e7ec9b3a55c356852",
+  "inclusion_proofs": [
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "0",
+      "sibling_hashes": [
+        "76f895d0c80aba5ae937ca72d83015af8cbc9f50c160c424355e5e90f63904be"
+      ]
+    },
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "1",
+      "sibling_hashes": [
+        "984c184b12c294b85464bc8fa1fedd65d0974d9c8b5949e033ce1d3d2fcf44e0"
+      ]
+    }
+  ],
+  "collection_salt_hex": "101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f"
+}

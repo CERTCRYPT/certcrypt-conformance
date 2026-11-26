@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://certcrypt.com/schemas/verification-package.schema.json",
+  "title": "CERTCRYPT Verification Package (verification-package/1)",
+  "description": "The JSON form of a verification_package, as verification-package/1 §9.4 and §22.1 fix it: one object with a closed member set. Passing this schema is necessary, not sufficient: the rules a schema cannot express are listed in `$comment` and decided by the verifier.",
+  "$comment": "Not expressible here and enforced by a conformant verifier: (1) no object at any depth repeats a member name (verifier-toolkit/1 §7.2); (2) verification_context names exactly the system_id and rules_version of the certificate's signed payload and, when present, of the independence_proof (verification-package/1 §13); (3) settlement_reference, when present, equals the independence_proof's settlement_ref and requires an independence_proof; (4) each artifact member is valid under its own specification (CCSP/1, independence.proof/1, capacity.evidence/1, settlement.binding/1 §7, settlement-material/1), and the artifacts belong to one certificate, one leaf and one settlement context.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["base_certificate", "verification_context"],
+  "properties": {
+    "base_certificate": {
+      "type": "object",
+      "description": "The issuer-emitted CCSP/1 certificate being verified. Its own shape is base-certificate.schema.json."
+    },
+    "verification_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rules_version", "system_id"],
+      "description": "The rules version and system domain the package is evaluated under, repeated from the artifacts it carries.",
+      "properties": {
+        "rules_version": {"type": "string", "minLength": 1, "description": "The rules version the certificate and the proof name."},
+        "system_id": {"type": "string", "minLength": 1, "description": "The system domain the certificate and the proof name."}
+      }
+    },
+    "independence_proof": {
+      "type": "object",
+      "description": "The independence.proof/1 artifact. Required for Independent verification."
+    },
+    "capacity_evidence": {
+      "type": "object",
+      "description": "The capacity.evidence/1 evidence of the certificate's commitment (zero-data path)."
+    },
+    "commitment_inclusion_proof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commitment_id", "commitment_leaf_hash", "commitment_index", "commitment_siblings", "subtree_size"],
+      "description": "The per-commitment inclusion path of settlement.binding/1 §7, from the certificate's commitment to the proof's subtree_root.",
+      "properties": {
+        "commitment_id": {"type": "string", "pattern": "^[0-9a-f]{64}$", "description": "The commitment's identifier: on the zero-data path, the digest of its capacity evidence."},
+        "commitment_leaf_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$", "description": "The commitment leaf hash, recomputed by the verifier from commitment_id."},
+        "commitment_index": {"type": "string", "pattern": "^(0|[1-9][0-9]*)$", "description": "The commitment's position in the leaf's sub-tree."},
+        "commitment_siblings": {"type": "array", "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "description": "Sibling hashes, bottom-up."},
+        "subtree_size": {"type": "string", "pattern": "^[1-9][0-9]*$", "description": "The number of commitments in the sub-tree; greater than commitment_index."}
+      }
+    },
+    "settlement_material": {
+      "type": "object",
+      "description": "The leaf's settlement material. Its own shape is settlement-material.schema.json."
+    },
+    "settlement_reference": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional copy of the independence_proof's settlement_ref. Carries no meaning of its own."
+    }
+  }
+}

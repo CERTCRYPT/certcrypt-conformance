@@ -1,0 +1,6 @@
+{
+  "verification_target_requested": "auto",
+  "input_mode": "artifact_set",
+  "independence_proof_path": "artifacts/independence-proof.json",
+  "settlement_material_path": "artifacts/settlement-material.json"
+}

@@ -1,0 +1,17 @@
+{
+  "canonicalization": "RFC 8785 JCS (serde_jcs) over the no-submission_set_id view; keys sorted lexicographically (NOT insertion-order).",
+  "closure_time_note": "closure_time MUST be RFC 3339 second precision, NO fractional seconds (a conformant receiver rejects any fractional second on this field specifically).",
+  "description": "submission-set/1 carries a submission_set_id = SHA3-256(JCS(submission set WITHOUT submission_set_id)). The no-id view covers schema, system_id, rules_version, system_root_fingerprint, closure_time and certificates[] — each certificate INCLUDING its embedded capacity_evidence (with the projected commitment/authorization signatures) and its operative context. This vector pins the algorithm: given the exact submission set in artifacts/submission-set.json (whose embedded signatures are FIXED placeholders, see hedged note), compute_submission_set_id reproduces expected_submission_set_id. submission_set_id is NOT itself signed — it is a recomputable identifier the verifier checks.",
+  "expected_submission_set_id": "3f812b171aed489b8420403f914beb995061ee3c199619e3ad44fb25e7359930",
+  "hedged_signature_note": "CRITICAL: submission_set_id covers the evidence's Level-1 (level1_signature) and Level-3 (commitment_signature_b64) signatures, and ML-DSA-65 signatures are HEDGED (non-deterministic) — so a submission set built with REAL signatures has a NON-deterministic submission_set_id across runs. To make a reproducible golden vector, artifacts/submission-set.json pins the embedded signatures to FIXED placeholder values (both components of projected_authorization.level1_signature carry sig_b64='QUFBQQ==', operation_key.public_key_b64='QkJCQg==', commitment_signature_b64='Q0NDQw=='). A conformant SDK validates: given THIS exact submission-set artifact, its compute_submission_set_id yields expected_submission_set_id. In production the signatures are real; submission_set_id is computed the same way over whatever signatures are present. (This vector pins ONLY the id recompute — the placeholder evidence is NOT a valid chain and is not signature-verified here.)",
+  "must_hold": [
+    "submission_set_id = SHA3-256(JCS(submission set with submission_set_id field removed)), lowercase hex",
+    "the JCS is RFC 8785 (sorted keys), not insertion-order",
+    "the no-id view includes certificates[] WITH each embedded capacity_evidence (and its signatures) and operative context; there is NO top-level holder_authorizations",
+    "given artifacts/submission-set.json verbatim, recomputing submission_set_id yields expected_submission_set_id",
+    "submission_set_id is an identifier, NOT a signed field — it carries no signature of its own"
+  ],
+  "primitive": "submission_set_id",
+  "submission_set_artifact_path": "artifacts/submission-set.json",
+  "zero_data_note": "submission-set/1 is the zero-data profile: each certificate carries a projected, unlinkable capacity_evidence (capacity.evidence/1) plus an operative context (cleartext holder_id/pool_id, carried node→issuance service only, for capacity accounting). There is NO top-level holder_authorizations slice — each evidence embeds its own projected_authorization (the system-domain-signed Level-1 binding). The operative context IS part of the transport set and so IS covered by submission_set_id."
+}

@@ -1,0 +1,245 @@
+{
+  "profile": "ecdsa-p256-deterministic/1",
+  "description": "ECDSA P-256 signatures as an issuer emits them: SHA3-256 prehash, an RFC 6979 deterministic nonce, low-s, raw r||s. One key over one message yields exactly one signature, so two implementations that sign the same base_certificate with the same key emit the same bytes.",
+  "rules": {
+    "curve": "P-256 (secp256r1). n is the group order, G the base point.",
+    "prehash": "h = SHA3-256(message), 32 bytes. The message is the exact byte string signed; for a composite signature it is M' (see composite-m-prime). It is hashed once.",
+    "nonce": "k per RFC 6979 section 3.2 with H = SHA3-256: HMAC-SHA3-256 throughout, qlen = 256, x = the private scalar as 32 big-endian bytes, h1 = h, bits2octets(h1) = (int_be(h1) mod n) as 32 bytes, no additional data. The first candidate k in [1, n-1] for which r and s are non-zero is used.",
+    "signature": "r = x(k*G) mod n; s = k^-1 * (int_be(h) + r*x) mod n.",
+    "low_s": "If s > n/2 (n >> 1), s is replaced by n - s. expected_low_s_applied records whether that happened; the nonce is unchanged either way.",
+    "encoding": "raw-rs-64: r || s, 32 bytes each, big-endian. Not DER. In a composite the component is {alg: \"ECDSA-P256-SHA3-256\", encoding: \"raw-rs-64\", low_s: true, sig_b64} with standard base64 and padding.",
+    "keys": "Each key names its source. issuer-key-derivation: the scalar of that family from master_seed_hex. key-derivation: the P-256 scalar of that family from seed_hex. scalar: scalar_hex as given. scalar_hex is always written out so an implementation can sign without deriving.",
+    "not_the_hmac_hash": "The HMAC hash is SHA3-256, the hash applied to the message. A signer that derives k with HMAC-SHA-256 over the same SHA3-256 prehash is deterministic too, and its signatures verify, but its bytes are not these. A signer with a random nonce likewise verifies and does not match."
+  },
+  "why_this_is_a_primitive": "Every verifier accepts any valid low-s signature, so a divergence here never fails a verification. What it breaks is reproducibility: the same issuer, key and certificate produce different bytes in different implementations, and a test that compares two emissions can only check that each verifies. Pinning the nonce makes the signature itself comparable.",
+  "keys": {
+    "ikd-counting": {
+      "source": "issuer-key-derivation",
+      "master_seed_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "scalar_hex": "5013d94db83f20ab92cc68838b5375259118e5af0f711e2807be5b4006e35652",
+      "expected_pub_p256_b64": "BI1wLLRmrOSUT68rsYelgnE11df4d23qd+jWu0K5tNBIO6h2Z8hwDvCqJVbTPC5dMe2QCrYEWgW+Mfw0EceyhUs="
+    },
+    "ikd-42": {
+      "source": "issuer-key-derivation",
+      "master_seed_hex": "4242424242424242424242424242424242424242424242424242424242424242",
+      "scalar_hex": "b9ff15bacf82b62d0f9eac79ded6e28fb27af73d94d96a0083ad279bfaa86170",
+      "expected_pub_p256_b64": "BIE+fyHxR9U1bo71LCHEAjQokZqTD+VPAdN/SNAGo39bLKSPjaqSOTIDkWKgWH0DvSea7fRG10XoziPlY6ltaZM="
+    },
+    "ikd-ff": {
+      "source": "issuer-key-derivation",
+      "master_seed_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "scalar_hex": "09e9bf3bac0fa8226ef0caa86f01c2de986e8b67c44e1300fd1bc5b4631ade1c",
+      "expected_pub_p256_b64": "BJUxvmhToFRgopfNHl33Z+zM9XgJJMydB2H/5VEKcxTnhgSLJpTmHPmF+9LFV3jhzIo/rrrydVnQdpn2qfYbTv4="
+    },
+    "kd-counting": {
+      "source": "key-derivation",
+      "seed_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "scalar_hex": "14f6fcd76c6dc2c15eac6dfc6593e5cd53e8df8da390a45c7db77868fa1774c3",
+      "expected_pub_p256_b64": "BA+DbkqxRIUiNH513OOQnoioOvua/zyk6KfUrBac92OMSr54yC3YRUSpNThpt3DNlhgmoGgC6HWvjJDF906YFUU="
+    },
+    "kd-zero": {
+      "source": "key-derivation",
+      "seed_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+      "scalar_hex": "4db1a66e578c7fbbe026387a156a45dc98507f866cbfad899df296462585db21",
+      "expected_pub_p256_b64": "BKJVL+TaMyYF44uc3f8uVpdfrTxAWV2ETJKK0UNnEzXrKHMhOZ8HOwyt0ZppUpJvBkzdN9cacek2naTZ5L8kR0I="
+    },
+    "scalar-1": {
+      "source": "scalar",
+      "scalar_hex": "0000000000000000000000000000000000000000000000000000000000000001",
+      "expected_pub_p256_b64": "BGsX0fLhLEJH+Lzm5WOkQPJ3A32BLeszoPShOUXYmMKWT+NC4v4af5uO5+tKfA+eFivOM1drMV7Oy7ZAaDe/UfU="
+    },
+    "scalar-n-1": {
+      "source": "scalar",
+      "scalar_hex": "ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632550",
+      "expected_pub_p256_b64": "BGsX0fLhLEJH+Lzm5WOkQPJ3A32BLeszoPShOUXYmMKWsBy9HAHlgGVxGBS1g/Bh6dQxzKmUzqExNEm/l8hArgo="
+    }
+  },
+  "vectors": [
+    {
+      "name": "issuer key, counting seed, composite M'",
+      "why": "the exact message an issuer's base_certificate signature covers",
+      "key": "ikd-counting",
+      "message_hex": "4345525443525950542d436f6d706f736974652d5369676e61747572652d7631006365727463727970742d636f6d706f736974652d703235362d6d6c64736136352d76310061616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
+      "expected_prehash_sha3_256_hex": "03a17092e25a8dbaae40b9f9ed456424aff31c0f166ec9c89a71d6736a37e1e6",
+      "expected_nonce_k_hex": "14c216eed39914c52f273ed6647970aaff3226f51053e2c9004e211967fce94a",
+      "expected_low_s_applied": false,
+      "expected_sig_hex": "61231e16952bd05c972eb10986f16a500a29377f0774c959a924eac0275e58ca5a0e8ef0dcdf54c07a6c0973d124b0b86a7034b1de34531663ffb4566bb4bcad",
+      "expected_sig_b64": "YSMeFpUr0FyXLrEJhvFqUAopN38HdMlZqSTqwCdeWMpaDo7w3N9UwHpsCXPRJLC4anA0sd40UxZj/7RWa7S8rQ=="
+    },
+    {
+      "name": "issuer key, counting seed, abc",
+      "why": "a short text message",
+      "key": "ikd-counting",
+      "message_utf8": "abc",
+      "message_hex": "616263",
+      "expected_prehash_sha3_256_hex": "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532",
+      "expected_nonce_k_hex": "06af61bf10b71b6d848f13be7e8d40d9b2bda37998e6597df9a608d1d396d5c0",
+      "expected_low_s_applied": true,
+      "expected_sig_hex": "5b26b230f51c32e4d37ea0cc3106f727cd9eabfa3ca77c1b80e96f8c68ee566469cc92d0a34c18ea8e92a2f28b9a11aef0c675382f807144b5d36923c26e4d5a",
+      "expected_sig_b64": "WyayMPUcMuTTfqDMMQb3J82eq/o8p3wbgOlvjGjuVmRpzJLQo0wY6o6SovKLmhGu8MZ1OC+AcUS102kjwm5NWg=="
+    },
+    {
+      "name": "issuer key, counting seed, empty message",
+      "why": "zero bytes still hash to a 32-byte prehash and sign",
+      "key": "ikd-counting",
+      "message_hex": "",
+      "expected_prehash_sha3_256_hex": "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a",
+      "expected_nonce_k_hex": "c87c462516cd67eb775a1eb1b7a5e60cdece556f67dd0793e6eaae2df506310a",
+      "expected_low_s_applied": true,
+      "expected_sig_hex": "601825933722a7cd472b5f0cbf38b60cffe4fd2998ea0dd4b2a8312200d957275294ab822a53c716d6adf94c8cea47e94096d632f8bccc07065d616c4d0bd728",
+      "expected_sig_b64": "YBglkzcip81HK18Mvzi2DP/k/SmY6g3UsqgxIgDZVydSlKuCKlPHFtat+UyM6kfpQJbWMvi8zAcGXWFsTQvXKA=="
+    },
+    {
+      "name": "issuer key, 0x42 seed, abc",
+      "why": "a second issuer key over the same message: a different nonce and signature",
+      "key": "ikd-42",
+      "message_utf8": "abc",
+      "message_hex": "616263",
+      "expected_prehash_sha3_256_hex": "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532",
+      "expected_nonce_k_hex": "32bc49943fed06cf91e834b43ff32b9cc4a677738eed4dab2ede023957f64f57",
+      "expected_low_s_applied": true,
+      "expected_sig_hex": "88bd14f06d30ff48968d591a9d25a6f7f94686059a62072a83d6e665f4736791338e303b4903965fc38163f87b42024200b71736947e5e79fb0b0499fd23e262",
+      "expected_sig_b64": "iL0U8G0w/0iWjVkanSWm9/lGhgWaYgcqg9bmZfRzZ5EzjjA7SQOWX8OBY/h7QgJCALcXNpR+Xnn7CwSZ/SPiYg=="
+    },
+    {
+      "name": "issuer key, all-ff seed, every byte value",
+      "why": "a binary message covering 0x00..0xff",
+      "key": "ikd-ff",
+      "message_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+      "expected_prehash_sha3_256_hex": "9b04c091da96b997afb8f2585d608aebe9c4a904f7d52c8f28c7e4d2dd9fba5f",
+      "expected_nonce_k_hex": "ee34068b2fccc20df207213db108997c26e5ef8bbc36b6de536dbebd79a08bcb",
+      "expected_low_s_applied": true,
+      "expected_sig_hex": "6d4f1f33058be06aa387f99e22d4b61ddcbd1c74c5281f67b9a8c2375118bf73025195a7ed9c81064286acd779915e968429938630b6b643d22ce1e818e3984f",
+      "expected_sig_b64": "bU8fMwWL4Gqjh/meItS2Hdy9HHTFKB9nuajCN1EYv3MCUZWn7ZyBBkKGrNd5kV6WhCmThjC2tkPSLOHoGOOYTw=="
+    },
+    {
+      "name": "ceremony key, counting seed, composite M'",
+      "why": "the key-derivation/1 key over the same M' as the first vector",
+      "key": "kd-counting",
+      "message_hex": "4345525443525950542d436f6d706f736974652d5369676e61747572652d7631006365727463727970742d636f6d706f736974652d703235362d6d6c64736136352d76310061616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
+      "expected_prehash_sha3_256_hex": "03a17092e25a8dbaae40b9f9ed456424aff31c0f166ec9c89a71d6736a37e1e6",
+      "expected_nonce_k_hex": "430d4be5378d55ad5d33fcc6c5739c5f3654e3dffbe8f62c1e7ba034c2971b8e",
+      "expected_low_s_applied": true,
+      "expected_sig_hex": "97748a020751579c6fd79e1fa7b2c766fed0b5aecfeab6fe676b9761788e01317c09d355fa9dbafe06336041b9bd18c2a513e1e3e13de6de21975bc485bef94b",
+      "expected_sig_b64": "l3SKAgdRV5xv154fp7LHZv7Qta7P6rb+Z2uXYXiOATF8CdNV+p26/gYzYEG5vRjCpRPh4+E95t4hl1vEhb75Sw=="
+    },
+    {
+      "name": "ceremony key, all-zero seed, abc",
+      "why": "the key-derivation/1 key of the all-zero seed",
+      "key": "kd-zero",
+      "message_utf8": "abc",
+      "message_hex": "616263",
+      "expected_prehash_sha3_256_hex": "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532",
+      "expected_nonce_k_hex": "74b00e00cb571e13fea4923a98a3dd1d608388aa4e11fc72e9fb3fad9bb95fee",
+      "expected_low_s_applied": false,
+      "expected_sig_hex": "9ecb03a8751e16e648439c45050406ed8cfb20fb53720522c52d7d01344f6beb06756c53775fc466b5712f24ab3aed1c17b912988b8e60f525f7ebc70f119c4d",
+      "expected_sig_b64": "nssDqHUeFuZIQ5xFBQQG7Yz7IPtTcgUixS19ATRPa+sGdWxTd1/EZrVxLySrOu0cF7kSmIuOYPUl9+vHDxGcTQ=="
+    },
+    {
+      "name": "scalar 1, abc",
+      "why": "the smallest private scalar",
+      "key": "scalar-1",
+      "message_utf8": "abc",
+      "message_hex": "616263",
+      "expected_prehash_sha3_256_hex": "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532",
+      "expected_nonce_k_hex": "3bed5fc7bd0180cec6ecfbc4f4ecf46f1f91ad7611b59d8b2a8c958964173263",
+      "expected_low_s_applied": false,
+      "expected_sig_hex": "381143574aca011c660428c64c04effc2689b03460094086d3ec33825d63d84f4ad1b35e12a3c6286e779ecc5c2708fbcd641e6906308080a84ba55160cb7a86",
+      "expected_sig_b64": "OBFDV0rKARxmBCjGTATv/CaJsDRgCUCG0+wzgl1j2E9K0bNeEqPGKG53nsxcJwj7zWQeaQYwgICoS6VRYMt6hg=="
+    },
+    {
+      "name": "scalar n-1, abc",
+      "why": "the largest private scalar",
+      "key": "scalar-n-1",
+      "message_utf8": "abc",
+      "message_hex": "616263",
+      "expected_prehash_sha3_256_hex": "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532",
+      "expected_nonce_k_hex": "9b951fe7b786735517dec5863250d5c0573f8ed5d1e5c25061b8d4f163fc255e",
+      "expected_low_s_applied": false,
+      "expected_sig_hex": "1dfd4dde9e13a0beb30513e1abc3a89d8737d2dd8e373b9da5a3e0e6338ddf6d0f6b7635152060c8b127144cd5f6fc414da3c40ab7a31a4e0205b3d860905435",
+      "expected_sig_b64": "Hf1N3p4ToL6zBRPhq8OonYc30t2ONzudpaPg5jON320Pa3Y1FSBgyLEnFEzV9vxBTaPECrejGk4CBbPYYJBUNQ=="
+    },
+    {
+      "name": "scalar n-1, 1000-byte message",
+      "why": "a message longer than one SHA3-256 block",
+      "key": "scalar-n-1",
+      "message_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7",
+      "expected_prehash_sha3_256_hex": "14e5de35911194ddad95ac1572e2b6ce054ed2146cd0562280fcab04ccfecbd8",
+      "expected_nonce_k_hex": "f25ba126d11bf9502a2d2c16721bb420ce7ba4dcbc0fc0ba7889cf9c20599455",
+      "expected_low_s_applied": true,
+      "expected_sig_hex": "a092e04ebf90fa62d96f5396f75410db7e76da5a76f542154a4bb09ffe65eea815f0af88fd0cf813176dd50fd424acea51ee8e4b4c6c1ad300a05c6fe092bbe3",
+      "expected_sig_b64": "oJLgTr+Q+mLZb1OW91QQ23522lp29UIVSkuwn/5l7qgV8K+I/Qz4Exdt1Q/UJKzqUe6OS0xsGtMAoFxv4JK74w=="
+    },
+    {
+      "name": "issuer key, 0x42 seed, sample",
+      "why": "the RFC 6979 A.2.5 message text, under this profile's SHA3-256",
+      "key": "ikd-42",
+      "message_utf8": "sample",
+      "message_hex": "73616d706c65",
+      "expected_prehash_sha3_256_hex": "f68f564e181663381ef67ae5849d3dd1d0f1044cf468d0a0b7875e4ff121906f",
+      "expected_nonce_k_hex": "3aa28b108d7cb8e10d9b546ac06202ec4ad5befe85ef98bfedbedb3dee21491b",
+      "expected_low_s_applied": true,
+      "expected_sig_hex": "2fd6642c64c9fddf3de89601b884f55c90dfc4fb80b359cbb8b1eb512328f3c14702e9b3fe683d1b1bbde33c30102e62f66cad6d34b25027b0e9a78244fd3ed2",
+      "expected_sig_b64": "L9ZkLGTJ/d896JYBuIT1XJDfxPuAs1nLuLHrUSMo88FHAumz/mg9Gxu94zwwEC5i9mytbTSyUCew6aeCRP0+0g=="
+    },
+    {
+      "name": "issuer key, 0x42 seed, test",
+      "why": "the second RFC 6979 A.2.5 message text, under this profile's SHA3-256",
+      "key": "ikd-42",
+      "message_utf8": "test",
+      "message_hex": "74657374",
+      "expected_prehash_sha3_256_hex": "36f028580bb02cc8272a9a020f4200e346e276ae664e45ee80745574e2f5ab80",
+      "expected_nonce_k_hex": "8a4d0fc6047a2dee9339653c4e5d0f0a59e594f6926ffa4eeaa35893fa63984b",
+      "expected_low_s_applied": false,
+      "expected_sig_hex": "1ccf95b5a2b1e808487edb4a9889f9c5b5de1ac5460ab0b83d6d235ee5c9808251908e29ae016bb46083c78cd44a0fca9d50b13ccf5e015cba46abbe2e565732",
+      "expected_sig_b64": "HM+VtaKx6AhIfttKmIn5xbXeGsVGCrC4PW0jXuXJgIJRkI4prgFrtGCDx4zUSg/KnVCxPM9eAVy6Rqu+LlZXMg=="
+    }
+  ],
+  "composite_cases": [
+    {
+      "name": "issuer key, counting seed",
+      "why": "the ECDSA component of a composite as it goes on the wire",
+      "key": "ikd-counting",
+      "composite_alg_id": "certcrypt-composite-p256-mldsa65-v1",
+      "payload_canon_digest_hex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected_m_prime_hex": "4345525443525950542d436f6d706f736974652d5369676e61747572652d7631006365727463727970742d636f6d706f736974652d703235362d6d6c64736136352d76310061616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
+      "expected_ecdsa_component": {
+        "alg": "ECDSA-P256-SHA3-256",
+        "encoding": "raw-rs-64",
+        "low_s": true,
+        "sig_b64": "YSMeFpUr0FyXLrEJhvFqUAopN38HdMlZqSTqwCdeWMpaDo7w3N9UwHpsCXPRJLC4anA0sd40UxZj/7RWa7S8rQ=="
+      },
+      "expected_low_s_applied": false
+    },
+    {
+      "name": "issuer key, 0x42 seed",
+      "why": "another issuer, another payload digest",
+      "key": "ikd-42",
+      "composite_alg_id": "certcrypt-composite-p256-mldsa65-v1",
+      "payload_canon_digest_hex": "ae058d0f85a5a4bde0af5bc6f1f645fab9d54d5b0feda12f7ccd866335b7a91f",
+      "expected_m_prime_hex": "4345525443525950542d436f6d706f736974652d5369676e61747572652d7631006365727463727970742d636f6d706f736974652d703235362d6d6c64736136352d76310061653035386430663835613561346264653061663562633666316636343566616239643534643562306665646131326637636364383636333335623761393166",
+      "expected_ecdsa_component": {
+        "alg": "ECDSA-P256-SHA3-256",
+        "encoding": "raw-rs-64",
+        "low_s": true,
+        "sig_b64": "fIShy3e6VK8M9FU0EvyfLXkyoh94LXA7+Uk1rl4ctdFcR+NDquI4KARef7+ufCCq/cyXrMHik8ITEfBML1NP7Q=="
+      },
+      "expected_low_s_applied": false
+    },
+    {
+      "name": "ceremony key, counting seed",
+      "why": "a key-derivation/1 key signing a composite",
+      "key": "kd-counting",
+      "composite_alg_id": "certcrypt-composite-p256-mldsa65-v1",
+      "payload_canon_digest_hex": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "expected_m_prime_hex": "4345525443525950542d436f6d706f736974652d5369676e61747572652d7631006365727463727970742d636f6d706f736974652d703235362d6d6c64736136352d76310062626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262",
+      "expected_ecdsa_component": {
+        "alg": "ECDSA-P256-SHA3-256",
+        "encoding": "raw-rs-64",
+        "low_s": true,
+        "sig_b64": "QlqyGaGkkS4OttGzsB/HtHjjKZqx8TJG4J780E5dcBEwurjKtFY7Ga9gg1jv/P9kJ//FNW3LnWtRjka6K4OB5Q=="
+      },
+      "expected_low_s_applied": true
+    }
+  ]
+}

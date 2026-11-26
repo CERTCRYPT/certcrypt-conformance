@@ -1,0 +1,27 @@
+{
+  "profile": "level1-binding/1",
+  "description": "The canonical bytes the system-domain Level-1 key signs over a holder authorization. CERTCRYPT uses TWO canonicalizations and this artifact takes the one that is NOT JCS: the bytes are insertion-ordered, in struct declaration order. Both digests are pinned below precisely so an implementation cannot pass by picking the wrong one and never finding out.",
+  "rules": {
+    "canonicalization": "Serialize the eight fields in THIS order — system_id, rules_version, system_root_fingerprint, authorized_role, authorization_issuer_kid, valid_from, valid_until, holder_key_set_root — as compact JSON: no spaces, no trailing newline, keys in insertion order (NOT sorted). That byte string is what gets signed.",
+    "digest": "SHA3-256 over those bytes.",
+    "why_not_jcs": "JCS sorts keys lexicographically, which reorders this object and yields a DIFFERENT digest — see expected_digest_if_jcs_wrongly_applied. An implementation that reaches for JCS here (the natural guess, since the evidence digest DOES use JCS) produces signatures that verify nowhere. Two canonicalizations coexist on purpose; this vector is the tripwire."
+  },
+  "vectors": [
+    {
+      "label": "conformance-sample",
+      "binding": {
+        "system_id": "certcrypt",
+        "rules_version": "rules/conformance",
+        "system_root_fingerprint": "abababababababababababababababababababababababababababababababab",
+        "authorized_role": "capacity-holder",
+        "authorization_issuer_kid": "system-domain-kid-1",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2027-01-01T00:00:00Z",
+        "holder_key_set_root": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+      },
+      "expected_signing_bytes_utf8": "{\"system_id\":\"certcrypt\",\"rules_version\":\"rules/conformance\",\"system_root_fingerprint\":\"abababababababababababababababababababababababababababababababab\",\"authorized_role\":\"capacity-holder\",\"authorization_issuer_kid\":\"system-domain-kid-1\",\"valid_from\":\"2026-01-01T00:00:00Z\",\"valid_until\":\"2027-01-01T00:00:00Z\",\"holder_key_set_root\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\"}",
+      "expected_signing_bytes_digest": "9797c226577878f59db757c4fad691373661852342806b9d6d9fa30c6e804118",
+      "expected_digest_if_jcs_wrongly_applied": "71808528f651f7e83478cd80dff4ea65c5cd424908bc1e298e89abb71ab3204e"
+    }
+  ]
+}

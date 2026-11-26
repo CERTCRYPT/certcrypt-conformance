@@ -1,0 +1,7 @@
+{
+  "result_code": "REJECTED",
+  "verification_target": "Independent",
+  "failed_check_ids": [
+    "FOUNDATION_SUCCESSOR_QUORUM_VALID"
+  ]
+}

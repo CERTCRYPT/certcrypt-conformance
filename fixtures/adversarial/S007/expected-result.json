@@ -1,0 +1,8 @@
+{
+  "result_code": "INDEPENDENT_INVALID",
+  "verification_target": "Independent",
+  "failed_check_ids": [
+    "PROOF_SIGNATURE_VALID"
+  ],
+  "attested_node": null
+}

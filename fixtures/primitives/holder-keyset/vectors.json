@@ -1,0 +1,459 @@
+{
+  "primitive": "holder_operation_key_tree",
+  "description": "Merkle tree over per-operation holder public keys. leaf_hash = SHA3-256(0x00 || public_key_bytes). Internal node = SHA3-256(0x01 || left || right). Odd child promoted unchanged. The authorization commits to the root (holder_key_set_root); each commitment discloses one leaf key + its inclusion proof.",
+  "leaf_hash_rule": "SHA3-256(0x00 || public_key_bytes), lowercase hex",
+  "node_hash_rule": "SHA3-256(0x01 || left_bytes || right_bytes), lowercase hex",
+  "note": "public_key_bytes here are deterministic placeholders (a 32-byte run of a constant) so the vector is reproducible; the Merkle layer hashes arbitrary bytes, ML-DSA validity is not needed to pin leaf hash / root / proof.",
+  "tree_size": 4,
+  "leaves": [
+    {
+      "leaf_index": 0,
+      "public_key_bytes_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+      "expected_leaf_hash": "dc33296e4d20f0ef35ff9fd449e23ebbaa5a049a17779db3c2fe194b499aaf74"
+    },
+    {
+      "leaf_index": 1,
+      "public_key_bytes_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+      "expected_leaf_hash": "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d"
+    },
+    {
+      "leaf_index": 2,
+      "public_key_bytes_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+      "expected_leaf_hash": "8c763867707d387883f5e4cf7eaa00c1b4a895ba50c32c5620f3e7bbdaed3f18"
+    },
+    {
+      "leaf_index": 3,
+      "public_key_bytes_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+      "expected_leaf_hash": "10d196bdc8d05fd3c37f430881a8caef45f273d496199b0e53c8e2bc9e0fe065"
+    }
+  ],
+  "expected_root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+  "inclusion_proofs": [
+    {
+      "leaf_index": 0,
+      "sibling_hashes": [
+        "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d",
+        "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+      ]
+    },
+    {
+      "leaf_index": 1,
+      "sibling_hashes": [
+        "dc33296e4d20f0ef35ff9fd449e23ebbaa5a049a17779db3c2fe194b499aaf74",
+        "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+      ]
+    },
+    {
+      "leaf_index": 2,
+      "sibling_hashes": [
+        "10d196bdc8d05fd3c37f430881a8caef45f273d496199b0e53c8e2bc9e0fe065",
+        "9384262110967d219f4f664a14b51593433629bef87d7d901bd3ff0021cb8af8"
+      ]
+    },
+    {
+      "leaf_index": 3,
+      "sibling_hashes": [
+        "8c763867707d387883f5e4cf7eaa00c1b4a895ba50c32c5620f3e7bbdaed3f18",
+        "9384262110967d219f4f664a14b51593433629bef87d7d901bd3ff0021cb8af8"
+      ]
+    }
+  ],
+  "must_hold": [
+    "each leaf's inclusion proof verifies against expected_root, in every tree",
+    "a leaf key not in the tree fails membership against expected_root",
+    "every disclosure case yields expected_valid",
+    "a valid membership is not an identity: tree_size_alias_valid verifies with other bytes than the reference disclosure"
+  ],
+  "trees_note": "More tree shapes over the same placeholder keys (key k = 32 bytes of value k): one leaf (the root is the leaf, no siblings), two leaves, and the odd widths 3 and 5, where the rightmost node is promoted unchanged and consumes no sibling.",
+  "trees": [
+    {
+      "tree_size": 1,
+      "public_keys_bytes_hex": [
+        "0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "expected_root": "dc33296e4d20f0ef35ff9fd449e23ebbaa5a049a17779db3c2fe194b499aaf74",
+      "inclusion_proofs": [
+        {
+          "leaf_index": 0,
+          "sibling_hashes": []
+        }
+      ]
+    },
+    {
+      "tree_size": 2,
+      "public_keys_bytes_hex": [
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "0101010101010101010101010101010101010101010101010101010101010101"
+      ],
+      "expected_root": "9384262110967d219f4f664a14b51593433629bef87d7d901bd3ff0021cb8af8",
+      "inclusion_proofs": [
+        {
+          "leaf_index": 0,
+          "sibling_hashes": [
+            "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d"
+          ]
+        },
+        {
+          "leaf_index": 1,
+          "sibling_hashes": [
+            "dc33296e4d20f0ef35ff9fd449e23ebbaa5a049a17779db3c2fe194b499aaf74"
+          ]
+        }
+      ]
+    },
+    {
+      "tree_size": 3,
+      "public_keys_bytes_hex": [
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "0101010101010101010101010101010101010101010101010101010101010101",
+        "0202020202020202020202020202020202020202020202020202020202020202"
+      ],
+      "expected_root": "fee2936ac84c975d74c52a2d2bf1d4a6aa06d7e32ca8767aef2a6b40759333f7",
+      "inclusion_proofs": [
+        {
+          "leaf_index": 0,
+          "sibling_hashes": [
+            "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d",
+            "8c763867707d387883f5e4cf7eaa00c1b4a895ba50c32c5620f3e7bbdaed3f18"
+          ]
+        },
+        {
+          "leaf_index": 1,
+          "sibling_hashes": [
+            "dc33296e4d20f0ef35ff9fd449e23ebbaa5a049a17779db3c2fe194b499aaf74",
+            "8c763867707d387883f5e4cf7eaa00c1b4a895ba50c32c5620f3e7bbdaed3f18"
+          ]
+        },
+        {
+          "leaf_index": 2,
+          "sibling_hashes": [
+            "9384262110967d219f4f664a14b51593433629bef87d7d901bd3ff0021cb8af8"
+          ]
+        }
+      ]
+    },
+    {
+      "tree_size": 5,
+      "public_keys_bytes_hex": [
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        "0101010101010101010101010101010101010101010101010101010101010101",
+        "0202020202020202020202020202020202020202020202020202020202020202",
+        "0303030303030303030303030303030303030303030303030303030303030303",
+        "0404040404040404040404040404040404040404040404040404040404040404"
+      ],
+      "expected_root": "6f1953e2cb0f833dc620f8bc507dbb436def54f9e513ac662bb429fe587a1029",
+      "inclusion_proofs": [
+        {
+          "leaf_index": 0,
+          "sibling_hashes": [
+            "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d",
+            "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941",
+            "686e2519356d9f8b88ac1cfd0571a3aca32364fd33e8d67fa557d2d6e4f4810a"
+          ]
+        },
+        {
+          "leaf_index": 1,
+          "sibling_hashes": [
+            "dc33296e4d20f0ef35ff9fd449e23ebbaa5a049a17779db3c2fe194b499aaf74",
+            "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941",
+            "686e2519356d9f8b88ac1cfd0571a3aca32364fd33e8d67fa557d2d6e4f4810a"
+          ]
+        },
+        {
+          "leaf_index": 2,
+          "sibling_hashes": [
+            "10d196bdc8d05fd3c37f430881a8caef45f273d496199b0e53c8e2bc9e0fe065",
+            "9384262110967d219f4f664a14b51593433629bef87d7d901bd3ff0021cb8af8",
+            "686e2519356d9f8b88ac1cfd0571a3aca32364fd33e8d67fa557d2d6e4f4810a"
+          ]
+        },
+        {
+          "leaf_index": 3,
+          "sibling_hashes": [
+            "8c763867707d387883f5e4cf7eaa00c1b4a895ba50c32c5620f3e7bbdaed3f18",
+            "9384262110967d219f4f664a14b51593433629bef87d7d901bd3ff0021cb8af8",
+            "686e2519356d9f8b88ac1cfd0571a3aca32364fd33e8d67fa557d2d6e4f4810a"
+          ]
+        },
+        {
+          "leaf_index": 4,
+          "sibling_hashes": [
+            "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40"
+          ]
+        }
+      ]
+    }
+  ],
+  "disclosure_cases_note": "Full disclosures (§11) checked against a root by the membership procedure (§12) and the failure conditions (§13). expected_valid is the verdict and failure names the condition. A JSON number that is not an integer, a string where an integer is required, an additional or missing member, a sibling that is not 64 lowercase hex, and non-canonical base64 all fail.",
+  "disclosure_cases": [
+    {
+      "name": "valid_leaf_2_of_4",
+      "disclosure": {
+        "leaf_index": 2,
+        "public_key_b64": "AgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgI=",
+        "inclusion_proof": [
+          "10d196bdc8d05fd3c37f430881a8caef45f273d496199b0e53c8e2bc9e0fe065",
+          "9384262110967d219f4f664a14b51593433629bef87d7d901bd3ff0021cb8af8"
+        ],
+        "tree_size": 4
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": true,
+      "note": "the reference disclosure for leaf 2 of the 4-leaf tree"
+    },
+    {
+      "name": "tree_size_alias_valid",
+      "disclosure": {
+        "leaf_index": 0,
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "inclusion_proof": [
+          "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+        ],
+        "tree_size": 3
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": true,
+      "note": "tree_size is not committed to by the root: leaf 0 of the 4-leaf tree walks the same two siblings with tree_size 3. Membership holds and the disclosure bytes differ, so a disclosure is never an identity (replay is keyed on the signed commitment)"
+    },
+    {
+      "name": "leaf_index_equals_tree_size",
+      "disclosure": {
+        "leaf_index": 4,
+        "public_key_b64": "AwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwM=",
+        "inclusion_proof": [
+          "8c763867707d387883f5e4cf7eaa00c1b4a895ba50c32c5620f3e7bbdaed3f18",
+          "9384262110967d219f4f664a14b51593433629bef87d7d901bd3ff0021cb8af8"
+        ],
+        "tree_size": 4
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "leaf_index >= tree_size",
+      "note": "leaf_index must be < tree_size"
+    },
+    {
+      "name": "leaf_index_alias_out_of_range",
+      "disclosure": {
+        "leaf_index": 3,
+        "public_key_b64": "AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE=",
+        "inclusion_proof": [
+          "dc33296e4d20f0ef35ff9fd449e23ebbaa5a049a17779db3c2fe194b499aaf74"
+        ],
+        "tree_size": 2
+      },
+      "root": "9384262110967d219f4f664a14b51593433629bef87d7d901bd3ff0021cb8af8",
+      "expected_valid": false,
+      "failure": "leaf_index >= tree_size",
+      "note": "index 3 in a 2-leaf tree folds like index 1; it fails on the bound instead of verifying as an alias"
+    },
+    {
+      "name": "tree_size_zero",
+      "disclosure": {
+        "leaf_index": 0,
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "inclusion_proof": [
+          "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+        ],
+        "tree_size": 0
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "tree_size is not a positive JSON integer",
+      "note": "the empty tree is invalid"
+    },
+    {
+      "name": "leaf_index_negative",
+      "disclosure": {
+        "leaf_index": -1,
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "inclusion_proof": [
+          "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+        ],
+        "tree_size": 4
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "leaf_index is not a non-negative JSON integer",
+      "note": "leaf_index is a non-negative JSON integer"
+    },
+    {
+      "name": "leaf_index_string",
+      "disclosure": {
+        "leaf_index": "0",
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "inclusion_proof": [
+          "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+        ],
+        "tree_size": 4
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "leaf_index is not a non-negative JSON integer",
+      "note": "leaf_index is a JSON integer, not a string"
+    },
+    {
+      "name": "tree_size_fractional",
+      "disclosure": {
+        "leaf_index": 0,
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "inclusion_proof": [
+          "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+        ],
+        "tree_size": 4.5
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "tree_size is not a positive JSON integer",
+      "note": "tree_size is a JSON integer"
+    },
+    {
+      "name": "sibling_uppercase_hex",
+      "disclosure": {
+        "leaf_index": 0,
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "inclusion_proof": [
+          "29F8F87D926A90ECC02E336BBADC2E512C7B155497A6CA8B86A574593D2EA58D",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+        ],
+        "tree_size": 4
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "an inclusion_proof entry is not 64-char lowercase hex",
+      "note": "an uppercase sibling is not another spelling of the proof; it fails"
+    },
+    {
+      "name": "sibling_not_hex",
+      "disclosure": {
+        "leaf_index": 0,
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "inclusion_proof": [
+          "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+        ],
+        "tree_size": 4
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "an inclusion_proof entry is not 64-char lowercase hex",
+      "note": "a non-hex sibling fails, without being read as zero bytes and without a crash"
+    },
+    {
+      "name": "sibling_short",
+      "disclosure": {
+        "leaf_index": 0,
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "inclusion_proof": [
+          "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+        ],
+        "tree_size": 4
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "an inclusion_proof entry is not 64-char lowercase hex",
+      "note": "a sibling is exactly 64 characters"
+    },
+    {
+      "name": "sibling_missing",
+      "disclosure": {
+        "leaf_index": 0,
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "inclusion_proof": [
+          "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d"
+        ],
+        "tree_size": 4
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "inclusion_proof has too few entries",
+      "note": "too few siblings for the tree shape"
+    },
+    {
+      "name": "sibling_extra",
+      "disclosure": {
+        "leaf_index": 0,
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "inclusion_proof": [
+          "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941",
+          "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d"
+        ],
+        "tree_size": 4
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "inclusion_proof has unconsumed entries",
+      "note": "every sibling must be consumed"
+    },
+    {
+      "name": "extra_member",
+      "disclosure": {
+        "leaf_index": 0,
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "inclusion_proof": [
+          "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+        ],
+        "tree_size": 4,
+        "note": "x"
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "disclosure members are not exactly the four of §11",
+      "note": "a disclosure carries exactly four members"
+    },
+    {
+      "name": "missing_member",
+      "disclosure": {
+        "leaf_index": 0,
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "inclusion_proof": [
+          "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+        ]
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "disclosure members are not exactly the four of §11",
+      "note": "a disclosure carries exactly four members"
+    },
+    {
+      "name": "public_key_b64_non_canonical",
+      "disclosure": {
+        "leaf_index": 0,
+        "public_key_b64": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB=",
+        "inclusion_proof": [
+          "29f8f87d926a90ecc02e336bbadc2e512c7b155497a6ca8b86a574593d2ea58d",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+        ],
+        "tree_size": 4
+      },
+      "root": "5996c0733a105bb97c26fd79ca675058e1f6077e8a30401b399cca4742dbab40",
+      "expected_valid": false,
+      "failure": "public_key_b64 is not canonical base64",
+      "note": "the last character before the padding carries nonzero unused bits: it decodes to the same key and is not canonical base64"
+    },
+    {
+      "name": "wrong_root",
+      "disclosure": {
+        "leaf_index": 1,
+        "public_key_b64": "AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE=",
+        "inclusion_proof": [
+          "dc33296e4d20f0ef35ff9fd449e23ebbaa5a049a17779db3c2fe194b499aaf74",
+          "9b4e040d0aa3878cfff60459fca5979c1e36d7a164f1e185bdb95d37d944b941"
+        ],
+        "tree_size": 4
+      },
+      "root": "9384262110967d219f4f664a14b51593433629bef87d7d901bd3ff0021cb8af8",
+      "expected_valid": false,
+      "failure": "recomputed root differs",
+      "note": "a valid disclosure checked against another root"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "result_code": "ISSUED_INVALID",
+  "verification_target": "Issued",
+  "failed_check_ids": [
+    "ORIGINAL_MATERIAL_COMPARISON_VALID"
+  ],
+  "complete_verification_against_original_material_performed": true,
+  "complete_verification_against_original_material_passed": false,
+  "subject_scope": [
+    {
+      "profile": "subject.email/1",
+      "opaque": true
+    }
+  ]
+}

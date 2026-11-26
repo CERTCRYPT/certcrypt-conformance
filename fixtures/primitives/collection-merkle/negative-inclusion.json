@@ -1,0 +1,237 @@
+{
+  "label": "element-level inclusion — negative & control cases (verifyCollectionInclusion)",
+  "commitment_scheme": "collection.merkle-sha3-256/1",
+  "leaf_profile": "subject.binary/1",
+  "note": "Cross-implementation oracle for the ELEMENT-LEVEL inclusion operation (spec §14/§15/§16). Each case gives one leaf (leaf_hex = canonical bytes under leaf_profile), its inclusion proof object, the declared_cardinality and root to check against, and the expected verdict. A conforming toolkit MUST return valid==expected_valid for every case; reason_class names the §16 failure class (informative, not byte-pinned). Salted preimage (collection.merkle-sha3-256/1 §10): each case's salt is the file-level collection_salt_hex unless the case overrides it.",
+  "cases": [
+    {
+      "name": "control-positive",
+      "expected_valid": true,
+      "reason_class": null,
+      "leaf_hex": "6c6561662d30",
+      "declared_cardinality": "4",
+      "root": "2eca8db425609cbc5785d53845e4f82a1e597e6dc70ad5cf58587f525737327a",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "0",
+        "sibling_hashes": [
+          "dc3b39459fe5784d5524dbb82370a2fd0f790ca3843c6af16ec0da9299736e85",
+          "12529d9f4405cb12a5be4e5845746fbf197b0a9b334c1b954665f27c94dd0f33"
+        ]
+      }
+    },
+    {
+      "name": "false-leaf",
+      "expected_valid": false,
+      "reason_class": "ROOT_MISMATCH",
+      "leaf_hex": "6e6f742d612d6c656166",
+      "declared_cardinality": "4",
+      "root": "2eca8db425609cbc5785d53845e4f82a1e597e6dc70ad5cf58587f525737327a",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "0",
+        "sibling_hashes": [
+          "dc3b39459fe5784d5524dbb82370a2fd0f790ca3843c6af16ec0da9299736e85",
+          "12529d9f4405cb12a5be4e5845746fbf197b0a9b334c1b954665f27c94dd0f33"
+        ]
+      }
+    },
+    {
+      "name": "false-path",
+      "expected_valid": false,
+      "reason_class": "ROOT_MISMATCH",
+      "leaf_hex": "6c6561662d30",
+      "declared_cardinality": "4",
+      "root": "2eca8db425609cbc5785d53845e4f82a1e597e6dc70ad5cf58587f525737327a",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "0",
+        "sibling_hashes": [
+          "0000000000000000000000000000000000000000000000000000000000000000",
+          "12529d9f4405cb12a5be4e5845746fbf197b0a9b334c1b954665f27c94dd0f33"
+        ]
+      }
+    },
+    {
+      "name": "nonmatching-root",
+      "expected_valid": false,
+      "reason_class": "ROOT_MISMATCH",
+      "leaf_hex": "6c6561662d30",
+      "declared_cardinality": "4",
+      "root": "abababababababababababababababababababababababababababababababab",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "0",
+        "sibling_hashes": [
+          "dc3b39459fe5784d5524dbb82370a2fd0f790ca3843c6af16ec0da9299736e85",
+          "12529d9f4405cb12a5be4e5845746fbf197b0a9b334c1b954665f27c94dd0f33"
+        ]
+      }
+    },
+    {
+      "name": "path-too-long",
+      "expected_valid": false,
+      "reason_class": "PATH_LENGTH",
+      "leaf_hex": "6c6561662d30",
+      "declared_cardinality": "4",
+      "root": "2eca8db425609cbc5785d53845e4f82a1e597e6dc70ad5cf58587f525737327a",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "0",
+        "sibling_hashes": [
+          "dc3b39459fe5784d5524dbb82370a2fd0f790ca3843c6af16ec0da9299736e85",
+          "12529d9f4405cb12a5be4e5845746fbf197b0a9b334c1b954665f27c94dd0f33",
+          "1111111111111111111111111111111111111111111111111111111111111111"
+        ]
+      }
+    },
+    {
+      "name": "path-too-short",
+      "expected_valid": false,
+      "reason_class": "PATH_LENGTH",
+      "leaf_hex": "6c6561662d30",
+      "declared_cardinality": "4",
+      "root": "2eca8db425609cbc5785d53845e4f82a1e597e6dc70ad5cf58587f525737327a",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "0",
+        "sibling_hashes": [
+          "dc3b39459fe5784d5524dbb82370a2fd0f790ca3843c6af16ec0da9299736e85"
+        ]
+      }
+    },
+    {
+      "name": "index-out-of-bounds",
+      "expected_valid": false,
+      "reason_class": "INDEX_BOUNDS",
+      "leaf_hex": "6c6561662d30",
+      "declared_cardinality": "4",
+      "root": "2eca8db425609cbc5785d53845e4f82a1e597e6dc70ad5cf58587f525737327a",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "9",
+        "sibling_hashes": [
+          "dc3b39459fe5784d5524dbb82370a2fd0f790ca3843c6af16ec0da9299736e85",
+          "12529d9f4405cb12a5be4e5845746fbf197b0a9b334c1b954665f27c94dd0f33"
+        ]
+      }
+    },
+    {
+      "name": "index-non-canonical",
+      "expected_valid": false,
+      "reason_class": "INDEX_NONCANONICAL",
+      "leaf_hex": "6c6561662d30",
+      "declared_cardinality": "4",
+      "root": "2eca8db425609cbc5785d53845e4f82a1e597e6dc70ad5cf58587f525737327a",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "00",
+        "sibling_hashes": [
+          "dc3b39459fe5784d5524dbb82370a2fd0f790ca3843c6af16ec0da9299736e85",
+          "12529d9f4405cb12a5be4e5845746fbf197b0a9b334c1b954665f27c94dd0f33"
+        ]
+      }
+    },
+    {
+      "name": "wrong-proof-version",
+      "expected_valid": false,
+      "reason_class": "PROOF_VERSION",
+      "leaf_hex": "6c6561662d30",
+      "declared_cardinality": "4",
+      "root": "2eca8db425609cbc5785d53845e4f82a1e597e6dc70ad5cf58587f525737327a",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/2",
+        "leaf_index": "0",
+        "sibling_hashes": [
+          "dc3b39459fe5784d5524dbb82370a2fd0f790ca3843c6af16ec0da9299736e85",
+          "12529d9f4405cb12a5be4e5845746fbf197b0a9b334c1b954665f27c94dd0f33"
+        ]
+      }
+    },
+    {
+      "name": "malformed-sibling",
+      "expected_valid": false,
+      "reason_class": "MALFORMED_SIBLING",
+      "leaf_hex": "6c6561662d30",
+      "declared_cardinality": "4",
+      "root": "2eca8db425609cbc5785d53845e4f82a1e597e6dc70ad5cf58587f525737327a",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "0",
+        "sibling_hashes": [
+          "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz",
+          "12529d9f4405cb12a5be4e5845746fbf197b0a9b334c1b954665f27c94dd0f33"
+        ]
+      }
+    },
+    {
+      "name": "additional-member",
+      "expected_valid": false,
+      "reason_class": "ADDITIONAL_MEMBER",
+      "leaf_hex": "6c6561662d30",
+      "declared_cardinality": "4",
+      "root": "2eca8db425609cbc5785d53845e4f82a1e597e6dc70ad5cf58587f525737327a",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "0",
+        "sibling_hashes": [
+          "dc3b39459fe5784d5524dbb82370a2fd0f790ca3843c6af16ec0da9299736e85",
+          "12529d9f4405cb12a5be4e5845746fbf197b0a9b334c1b954665f27c94dd0f33"
+        ],
+        "note": "x"
+      }
+    },
+    {
+      "name": "root-not-hex64",
+      "expected_valid": false,
+      "reason_class": "MALFORMED_ROOT",
+      "leaf_hex": "6c6561662d30",
+      "declared_cardinality": "4",
+      "root": "abc",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "0",
+        "sibling_hashes": [
+          "dc3b39459fe5784d5524dbb82370a2fd0f790ca3843c6af16ec0da9299736e85",
+          "12529d9f4405cb12a5be4e5845746fbf197b0a9b334c1b954665f27c94dd0f33"
+        ]
+      }
+    },
+    {
+      "name": "unsalted-root-rejected",
+      "leaf_hex": "6c6561662d30",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "0",
+        "sibling_hashes": [
+          "b03d789ef9bfd8fc796790a86646f0e24b2239c8dbb93bc1f5aeaa39fd3ee12e",
+          "d9919d10f8c73fc3754c1272779eeac8b6074c5dd0309f8db95cae8da6a82f47"
+        ]
+      },
+      "declared_cardinality": "4",
+      "root": "6c700a0ea83da59ee0e0b6ad870df0312595b428340c1f9fccdf20fab398f533",
+      "expected_valid": false,
+      "reason_class": "ROOT_MISMATCH",
+      "note": "Leaves and path of an UNSALTED tree. An implementation that ignores collection_salt_hex reproduces this root and wrongly accepts; a conforming one recomputes a different root and rejects."
+    },
+    {
+      "name": "empty-salt-rejected",
+      "leaf_hex": "6c6561662d30",
+      "proof": {
+        "proof_version": "collection.merkle-sha3-256/1",
+        "leaf_index": "0",
+        "sibling_hashes": [
+          "dc3b39459fe5784d5524dbb82370a2fd0f790ca3843c6af16ec0da9299736e85",
+          "12529d9f4405cb12a5be4e5845746fbf197b0a9b334c1b954665f27c94dd0f33"
+        ]
+      },
+      "declared_cardinality": "4",
+      "root": "2eca8db425609cbc5785d53845e4f82a1e597e6dc70ad5cf58587f525737327a",
+      "collection_salt_hex": "",
+      "expected_valid": false,
+      "reason_class": "MISSING_SALT",
+      "note": "Overrides the file-level salt with an empty one. §9 requires a non-empty salt; the verifier MUST reject rather than fall back to the unsalted construction."
+    }
+  ],
+  "collection_salt_hex": "101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f"
+}

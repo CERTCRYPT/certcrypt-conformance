@@ -1,0 +1,12 @@
+{
+  "result_code": "INDEPENDENT_INVALID",
+  "verification_target": "Independent",
+  "failed_check_ids": [
+    "SYSTEM_DOMAIN_EXACT",
+    "CLONE_OR_FORK_REJECTED"
+  ],
+  "certcrypt_lineage": {
+    "certcrypt_domain_bound": false,
+    "history_bound_under_certcrypt": false
+  }
+}

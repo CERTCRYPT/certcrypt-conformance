@@ -1,0 +1,95 @@
+{
+  "primitive": "composite signature M' framing",
+  "description": "The domain-separated message every component of a composite signature actually signs. Fixes the bytes that sit between a payload digest and a signature — the last deterministic step before the non-deterministic part begins.",
+  "why_this_is_a_primitive": "A composite signature cannot be pinned as bytes: ML-DSA-65 as used here is hedged, so two signings of the same input differ (the ECDSA P-256 component is deterministic under RFC 6979 and is pinned on its own by `ecdsa-p256-deterministic`). What IS deterministic is M', and it is where a divergence does the most damage: two implementations that frame M' differently produce signatures that verify nowhere, while each one verifies its own perfectly. Every local test passes on both sides and nothing fails until they meet.",
+  "construction": "M' = \"CERTCRYPT-Composite-Signature-v1\" || 0x00 || composite_alg_id || 0x00 || payload_canon_digest_hex. All three parts are ASCII; the separators are single NUL bytes, not text. `payload_canon_digest_hex` is the LOWERCASE hex of SHA3-256(JCS(payload)) — the hex string is framed in as text, not the 32 raw bytes it denotes.",
+  "why_each_part": {
+    "domain_prefix": "Binds the message to this construction, so a signature made here cannot be replayed as a signature over the same digest in some other protocol.",
+    "composite_alg_id": "Binds the PROFILE. Without it a signature under one profile could be reinterpreted under another — see the `different-profile-same-digest` case, where an identical payload digest must yield a different M'.",
+    "separators": "A NUL between the parts, so a prefix boundary cannot be shifted: concatenating without separators would let one field's tail and the next field's head be regrouped into a different but equally valid framing."
+  },
+  "vectors": [
+    {
+      "label": "canonical-profile",
+      "composite_alg_id": "certcrypt-composite-p256-mldsa65-v1",
+      "payload_canon_digest_hex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected_m_prime_hex": "4345525443525950542d436f6d706f736974652d5369676e61747572652d7631006365727463727970742d636f6d706f736974652d703235362d6d6c64736136352d76310061616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
+      "expected_m_prime_len": 133,
+      "expected_m_prime_sha3_256": "03a17092e25a8dbaae40b9f9ed456424aff31c0f166ec9c89a71d6736a37e1e6",
+      "why": "the canonical profile"
+    },
+    {
+      "label": "all-zero-digest",
+      "composite_alg_id": "certcrypt-composite-p256-mldsa65-v1",
+      "payload_canon_digest_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+      "expected_m_prime_hex": "4345525443525950542d436f6d706f736974652d5369676e61747572652d7631006365727463727970742d636f6d706f736974652d703235362d6d6c64736136352d76310030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030",
+      "expected_m_prime_len": 133,
+      "expected_m_prime_sha3_256": "a240eef8abe019774cf23a39cf69947efea4f792aeca9ec3a35d53471f172e12",
+      "why": "a digest of all zeros is still framed like any other — no special case"
+    },
+    {
+      "label": "all-f-digest",
+      "composite_alg_id": "certcrypt-composite-p256-mldsa65-v1",
+      "payload_canon_digest_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "expected_m_prime_hex": "4345525443525950542d436f6d706f736974652d5369676e61747572652d7631006365727463727970742d636f6d706f736974652d703235362d6d6c64736136352d76310066666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666",
+      "expected_m_prime_len": 133,
+      "expected_m_prime_sha3_256": "3ef4a9ce6f9e1b1e1587ac70b1df6bc235f4d447647e6509106f8a649a6b9782",
+      "why": "the other extreme of the hex range"
+    },
+    {
+      "label": "different-profile-same-digest",
+      "composite_alg_id": "certcrypt-composite-ed25519-mldsa65-v1",
+      "payload_canon_digest_hex": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected_m_prime_hex": "4345525443525950542d436f6d706f736974652d5369676e61747572652d7631006365727463727970742d636f6d706f736974652d656432353531392d6d6c64736136352d76310061616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
+      "expected_m_prime_len": 136,
+      "expected_m_prime_sha3_256": "8a91d5b8cd36a71e78f9a31049d0e793ffe526a7f333cc0ddd65c27232b70e5b",
+      "why": "THE load-bearing case: same payload digest, a different composite profile, and therefore a different M'. An implementation that omits the profile from the framing produces the same M' here as for `canonical-profile`, and its signatures become reinterpretable across profiles"
+    }
+  ],
+  "negative_cases": [
+    {
+      "name": "separators omitted",
+      "scenario": "the three parts concatenated with nothing between them",
+      "expected_outcome": "REJECTED",
+      "why": "the boundary between profile and digest stops being unambiguous"
+    },
+    {
+      "name": "separator is the ASCII character '0'",
+      "scenario": "0x30 used where 0x00 belongs",
+      "expected_outcome": "REJECTED",
+      "why": "a plausible transcription error, and it yields a different byte string"
+    },
+    {
+      "name": "raw digest bytes instead of hex",
+      "scenario": "the 32 bytes of the digest framed in place of its 64-character hex text",
+      "expected_outcome": "REJECTED",
+      "why": "half the length and different content; the contract frames the hex STRING"
+    },
+    {
+      "name": "uppercase hex",
+      "scenario": "the digest hex in uppercase",
+      "expected_outcome": "REJECTED",
+      "why": "different bytes — the contract fixes lowercase"
+    },
+    {
+      "name": "profile omitted",
+      "scenario": "prefix || 0x00 || digest, with no composite_alg_id",
+      "expected_outcome": "REJECTED",
+      "why": "a signature then says nothing about which profile produced it"
+    },
+    {
+      "name": "trailing separator",
+      "scenario": "a fourth NUL appended after the digest",
+      "expected_outcome": "REJECTED",
+      "why": "M' is exactly the three parts and two separators, with nothing after"
+    }
+  ],
+  "note_on_signatures": "This vector deliberately pins no signature value. The ML-DSA-65 component is hedged, so pinning a composite signature would make the vector unreproducible. What a conformant implementation must reproduce is M'; that its signatures over M' verify is pinned separately, by the goldens in `independence-proof-signature`.",
+  "must_hold": [
+    "M' is reproduced byte-for-byte, including both NUL separators",
+    "the same payload digest under a different composite_alg_id yields a different M'",
+    "the digest is framed as lowercase hex TEXT, never as its raw bytes",
+    "nothing precedes the domain prefix and nothing follows the digest"
+  ],
+  "profile_ids_note": "The `composite_alg_id` values here are the real profile identifiers, not placeholders: they are framed into M' verbatim, so a vector carrying an invented id would pin bytes no implementation ever produces."
+}

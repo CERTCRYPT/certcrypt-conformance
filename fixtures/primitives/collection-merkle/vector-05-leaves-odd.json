@@ -1,0 +1,60 @@
+{
+  "label": "five-leaf tree exercising odd-width promotion at levels 0 and 1",
+  "commitment_scheme": "collection.merkle-sha3-256/1",
+  "leaf_profile": "subject.binary/1",
+  "declared_cardinality": "5",
+  "leaves_hex": [
+    "7630353a30",
+    "7630353a31",
+    "7630353a32",
+    "7630353a33",
+    "7630353a34"
+  ],
+  "root": "f3951138d0ad49497a2302215cf7b3743dc635c0d15d7b6614c3d3d0330dc7d5",
+  "inclusion_proofs": [
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "0",
+      "sibling_hashes": [
+        "6a573c9c9a978bc71aa42ea0a8dde33c5ed484a18c5b643e16aded4eaa110ff0",
+        "5a9ebc56c2a0d8ce5e6818ef8f94299351b9fd984bb7f47fae15533778c66879",
+        "db335d793f40b0798c19086b72691d39ef5ea8defd7f4fa3310db10564cee7a7"
+      ]
+    },
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "1",
+      "sibling_hashes": [
+        "75ea2a1848181534c23aa4f5508745a529f8a65fee770e1f1395da531e251b9a",
+        "5a9ebc56c2a0d8ce5e6818ef8f94299351b9fd984bb7f47fae15533778c66879",
+        "db335d793f40b0798c19086b72691d39ef5ea8defd7f4fa3310db10564cee7a7"
+      ]
+    },
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "2",
+      "sibling_hashes": [
+        "cce71ec85e51027938a72a7d7a7982c5260fa9729eda574ea14e07d6e28ac04a",
+        "52533a9aba759695983e9615fef590a236ac1cdd4d0b718079737efc25586c57",
+        "db335d793f40b0798c19086b72691d39ef5ea8defd7f4fa3310db10564cee7a7"
+      ]
+    },
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "3",
+      "sibling_hashes": [
+        "1163c44bb921388aa53636b2c02acfdcdd4f23d3c6036e4c7672a85d1b216e21",
+        "52533a9aba759695983e9615fef590a236ac1cdd4d0b718079737efc25586c57",
+        "db335d793f40b0798c19086b72691d39ef5ea8defd7f4fa3310db10564cee7a7"
+      ]
+    },
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "4",
+      "sibling_hashes": [
+        "a96eade8e9551ca15370665980b988ee5b94d622420541a0a950fd27c35c3eb4"
+      ]
+    }
+  ],
+  "collection_salt_hex": "101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f"
+}

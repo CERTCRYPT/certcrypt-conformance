@@ -1,0 +1,6 @@
+{
+  "verification_target_requested": "independent",
+  "input_mode": "package",
+  "verification_package_path": "artifacts/verification-package.json",
+  "system_foundation_path": "artifacts/system-foundation.json"
+}

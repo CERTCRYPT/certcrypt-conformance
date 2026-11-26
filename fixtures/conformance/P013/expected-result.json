@@ -1,0 +1,7 @@
+{
+  "result_code": "ISSUED_VALID",
+  "verification_target": "Issued",
+  "failed_check_ids": [],
+  "complete_verification_against_original_material_performed": true,
+  "complete_verification_against_original_material_passed": true
+}

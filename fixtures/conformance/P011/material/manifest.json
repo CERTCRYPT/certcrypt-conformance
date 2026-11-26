@@ -1,0 +1,21 @@
+[
+  {
+    "material_file": "material-0.bin",
+    "materials": [
+      {
+        "id": "prompt",
+        "material_file": "nested-0-0.bin"
+      },
+      {
+        "id": "image",
+        "prehashed": true,
+        "subject_local_digest_hex": "ecd069c9830019e0df6b31ac4bbd1538e88d1093c9f44df07122e2f6eeadb0ca",
+        "byte_length": 25
+      },
+      {
+        "id": "answer",
+        "material_file": "nested-0-2.bin"
+      }
+    ]
+  }
+]

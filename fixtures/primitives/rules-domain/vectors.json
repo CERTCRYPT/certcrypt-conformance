@@ -1,0 +1,27 @@
+{
+  "profile": "rules-domain/1",
+  "description": "What each rules domain fixes: the commitment TTL an issuer must use, and the settlement profile the domain settles under. Both are decisions on the hot path — the TTL gates acceptance at submit, the profile selects how a settlement is read back — so two implementations that disagree on either reject each other's perfectly valid material. This vector pins both.",
+  "rules": {
+    "commitment_ttl_seconds": "expires_at MUST equal issued_at + this, exactly. It is not an upper bound: an issuer cannot shorten its own window either, or the TTL would say nothing about how long evidence stays valid.",
+    "unknown_rules_version": "null on BOTH columns, and null means REFUSE. An unrecognized domain is not a domain with defaults: accepting it under some fallback would admit material nobody can settle.",
+    "note_on_profile": "Every domain in this table settles under the same profile. That is not an invariant: the column exists because a domain may settle under another profile, and an implementation must read it rather than assume."
+  },
+  "vectors": [
+    {
+      "rules_version": "rules/2026-01",
+      "commitment_ttl_seconds": 86400,
+      "settlement_profile_id": "settlement.aggregated.xrpl/1"
+    },
+    {
+      "rules_version": "rules/conformance",
+      "commitment_ttl_seconds": 2592000,
+      "settlement_profile_id": "settlement.aggregated.xrpl/1"
+    },
+    {
+      "rules_version": "rules/does-not-exist",
+      "commitment_ttl_seconds": null,
+      "settlement_profile_id": null
+    }
+  ],
+  "scope_note": "This table lists the rules domains a third party can encounter. A deployment may run domains of its own that are not here; a verifier resolves those from the configuration it is given, never from this table. An unknown domain answers null on both columns, and that is a refusal — not an invitation to guess a default."
+}

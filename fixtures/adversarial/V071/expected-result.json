@@ -1,0 +1,7 @@
+{
+  "result_code": "REJECTED",
+  "verification_target": "Independent",
+  "failed_check_ids": [
+    "PACKAGE_CONTEXT_COHERENT"
+  ]
+}

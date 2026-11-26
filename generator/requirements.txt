@@ -1,0 +1,21 @@
+# CERTCRYPT conformance generator — pinned dependencies.
+#
+# SHA3-256 / SHAKE-256 come from the Python standard library (hashlib); no pin
+# needed. These cover Ed25519 (RFC 8032 deterministic), ML-DSA-65 (FIPS 204
+# deterministic variant), and ECDSA P-256 (RFC 6979 deterministic, via
+# python-ecdsa — `cryptography`'s ECDSA uses a random nonce, which would make
+# fixtures non-reproducible). Every signature
+# scheme used here is deterministic, so any independent generator reproduces the
+# same committed fixtures, and the P-256 component is byte-identical to any
+# RFC 6979 signer with H = SHA3-256 (the `ecdsa-p256-deterministic` family).
+cryptography==49.0.0
+dilithium-py==1.4.0
+ecdsa==0.19.2
+# jsonschema validates the fixture requests against the frozen normative input
+# schema (generator/validate_schemas.py) — a self-contained Draft 2020-12 check
+# with no dependency on any verifier implementation.
+jsonschema==4.26.0
+# idna applies UTS #46 (non-transitional, STD3 rules, CheckHyphens, CheckBidi,
+# CheckJoiners, DNS lengths) to the host names of the operator-domain-binding
+# family, so emit_primitives.py re-derives each A-label and each refusal.
+idna==3.10

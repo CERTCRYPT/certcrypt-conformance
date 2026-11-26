@@ -1,0 +1,29 @@
+{
+  "primitive": "capacity_evidence_projected_commitment", 
+  "description": "The projected commitment is what the per-operation leaf key signs and what the verifier re-verifies. Its signing bytes are canonical insertion-ordered JSON (NOT RFC 8785 JCS — keys are NOT sorted; field order is the struct declaration order). This vector pins those bytes and their digest so any implementation reproduces the exact message the ML-DSA signature covers.", 
+  "canonicalization": "insertion-ordered JSON (serde_json::to_vec over the struct in declared field order); keys are NOT alphabetically sorted", 
+  "two_canonicalizations_note": "IMPORTANT: there are TWO distinct canonicalizations in this profile. (1) The projected-commitment SIGNING BYTES (pinned here) are insertion-ordered (NOT JCS) because an ML-DSA signature covers them and must be byte-stable in declaration order. (2) The whole-evidence DIGEST bound into the IndependenceProofV1 uses RFC 8785 JCS (sorted keys) instead — it is not signed in declaration order, only needs to be deterministic and identical across languages; the deeply-nested evidence would otherwise diverge between Rust serde_json and TS JSON.stringify. Do not apply JCS to the signing bytes or insertion-order to the evidence digest. The golden-e2e.json fixture validates the JCS evidence digest end-to-end.", 
+  "signing_bytes_note": "Observe the key order: commitment_version first, NOT authorization_pseudonym — this is insertion order, not JCS. An implementation that sorts keys (JCS) will produce different bytes and the signature will not verify.", 
+  "hedged_signature_note": "ML-DSA-65 detached_sign (pqcrypto) is HEDGED/randomized: the signature bytes differ across runs even for the same message and key. Therefore the conformance contract pins the SIGNING BYTES and their digest (deterministic), NOT a fixed signature value. A conformant verifier checks that the disclosed signature verifies against these bytes and the disclosed leaf key — it never compares the signature to a golden value.", 
+  "projected_commitment": {
+    "commitment_version": "capacity.commitment/1", 
+    "system_id": "certcrypt", 
+    "system_root_fingerprint": "12e236790358eeae049c2a8f8be4b0005f2f0e108a2f4d3df9e7ea73ec20b334", 
+    "rules_version": "rules/conformance", 
+    "authorization_pseudonym": "56c56f02437d3641b2666173d44c38ae1002ac56d4bfbeb4328bb4e2cf50f714", 
+    "holder_pseudonym": "db2974eb3e34253b136211e985c8205945c860ab717f35931884d6081e80d31f", 
+    "pool_pseudonym": "8b8d1c1a97f2a3688987ceb8ec00d08ddf94dc1784ae79686dead9d27acde2a1", 
+    "certificate_commitment_digest": "efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef",
+    "consumed_quantity": "1.00",
+    "declared_effective_units": "1",
+    "issued_at": "2026-06-15T12:00:00Z", 
+    "expires_at": "2026-07-15T12:00:00Z"
+  }, 
+  "expected_signing_bytes_utf8": "{\"commitment_version\":\"capacity.commitment/1\",\"system_id\":\"certcrypt\",\"system_root_fingerprint\":\"12e236790358eeae049c2a8f8be4b0005f2f0e108a2f4d3df9e7ea73ec20b334\",\"rules_version\":\"rules/conformance\",\"authorization_pseudonym\":\"56c56f02437d3641b2666173d44c38ae1002ac56d4bfbeb4328bb4e2cf50f714\",\"holder_pseudonym\":\"db2974eb3e34253b136211e985c8205945c860ab717f35931884d6081e80d31f\",\"pool_pseudonym\":\"8b8d1c1a97f2a3688987ceb8ec00d08ddf94dc1784ae79686dead9d27acde2a1\",\"certificate_commitment_digest\":\"efefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefef\",\"consumed_quantity\":\"1.00\",\"declared_effective_units\":\"1\",\"issued_at\":\"2026-06-15T12:00:00Z\",\"expires_at\":\"2026-07-15T12:00:00Z\"}",
+  "expected_signing_bytes_digest": "e77da9995eb24be549bc25705449d4bcfd1bc4702f42cd7fe0834dd804fecd05",
+  "must_hold": [
+    "signing bytes are insertion-ordered (commitment_version appears before authorization_pseudonym)", 
+    "the digest is SHA3-256 of the signing bytes", 
+    "the holder signature verifies against these bytes and the disclosed leaf key (signature value itself is not pinned — it is hedged)"
+  ]
+}

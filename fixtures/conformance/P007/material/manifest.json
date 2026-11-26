@@ -1,0 +1,28 @@
+[
+  {
+    "collection": {
+      "commitment_scheme": "collection.merkle-sha3-256/1",
+      "root": "7d27dd23d875434d32c03f34f937aea3d23bb78f333f8c7510e1a699b4b1ab62",
+      "declared_cardinality": "3",
+      "leaves": [
+        {
+          "profile": "subject.binary/1",
+          "commitment_digest_hex": "23388ef8ca95a23e2b024f8d884561375c87c0813d98c8080628b13454dfb0fb"
+        },
+        {
+          "profile": "subject.binary/1",
+          "commitment_digest_hex": "2bc52ff337a877f5214652833418b9d591f578a606f57ef3b58a0624dd5caa75"
+        },
+        {
+          "profile": "subject.binary/1",
+          "commitment_digest_hex": "ab27559845c86ef1f6678eebbbb8f094e3f05f298cbe3a66ee01e34e5ef64255"
+        }
+      ]
+    },
+    "leaf_files": [
+      "leaf-0-0.bin",
+      "leaf-0-1.bin",
+      "leaf-0-2.bin"
+    ]
+  }
+]

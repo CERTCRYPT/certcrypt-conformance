@@ -1,0 +1,9 @@
+{
+  "verification_target_requested": "independent",
+  "input_mode": "artifact_set",
+  "base_certificate_path": "artifacts/base-certificate.json",
+  "settlement_material_path": "artifacts/settlement-material.json",
+  "capacity_evidence_path": "artifacts/capacity-evidence.json",
+  "commitment_inclusion_proof_path": "artifacts/commitment-inclusion-proof.json",
+  "system_foundation_path": "artifacts/system-foundation.json"
+}

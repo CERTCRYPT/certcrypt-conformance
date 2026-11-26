@@ -1,0 +1,7 @@
+{
+  "result_code": "INDEPENDENT_INVALID",
+  "verification_target": "Independent",
+  "failed_check_ids": [
+    "NON_REPLAY_VALID"
+  ]
+}

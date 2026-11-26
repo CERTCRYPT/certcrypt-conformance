@@ -1,0 +1,92 @@
+{
+  "primitive": "submission-set/1 cardinality and system constants",
+  "description": "The member cap a submission set is admitted under, and the system-wide constants every artifact carries. Fixes the values two implementations must agree on before a single byte is hashed.",
+  "why_this_is_a_primitive": "These are not digests, so nothing here recomputes. They are the numbers and strings that decide ADMISSION: a producer that caps at one value and a consumer that caps at another disagree about whether a set is well-formed, and the disagreement surfaces as a rejection nobody can reproduce. Pinning them makes the boundary a contract rather than a constant each implementation happens to carry.",
+  "member_cap": {
+    "max_submission_set_members": 64,
+    "rule": "A submission set carries at least 1 and at most 64 members. The bound is inclusive: exactly 64 is admissible, 65 is not.",
+    "source": "submission-set/1 §8.1: MAX_SUBMISSION_SET_MEMBERS = 64, a fixed protocol constant. A member carries a capacity.evidence/1 and never subject content, so its size does not grow with subject count or collection cardinality, and the member cap bounds the set directly (submission-set/1 §8.1).",
+    "note_for_implementers": "The cap must be enforced where the set is ASSEMBLED, not only where it is submitted. A producer that builds an over-sized set and discovers the cap at the transport layer has already spent the operation key leaves it grouped."
+  },
+  "cardinality_cases": [
+    {
+      "name": "single member",
+      "member_count": 1,
+      "expected_outcome": "admitted",
+      "why": "the minimum viable set; a set of one is the common case for a low-volume issuer"
+    },
+    {
+      "name": "at the cap",
+      "member_count": 64,
+      "expected_outcome": "admitted",
+      "why": "the bound is inclusive — an implementation using < instead of <= rejects a set every other implementation accepts"
+    },
+    {
+      "name": "one over the cap",
+      "member_count": 65,
+      "expected_outcome": "rejected",
+      "why": "the first inadmissible count; this is the case that catches an off-by-one in either direction"
+    },
+    {
+      "name": "empty set",
+      "member_count": 0,
+      "expected_outcome": "rejected",
+      "why": "a set with no members has no submission to close over. Its submission_set_id would still compute, so nothing downstream catches it — the emptiness must be refused where the set is built"
+    },
+    {
+      "name": "far over the cap",
+      "member_count": 256,
+      "expected_outcome": "rejected",
+      "why": "well beyond the cap. An over-cardinality set is malformed at the set level, so it is refused as a whole, before any per-member evaluation and before any capacity is consumed (submission-set/1 §8.1)"
+    }
+  ],
+  "system_constants": {
+    "system_id": {
+      "value": "certcrypt",
+      "rule": "The active system identity every artifact carries, in the `system_id` field. It is part of the signed bytes of capacity.evidence/1, operator.receipt/1, capacity.holder-authorization/1 and the settlement leaf preimage.",
+      "why_pinned": "It sits inside signed preimages, so a divergent value is not a mislabel — it is a different digest. An implementation that defaults it, or derives it per environment, signs bytes no other implementation reproduces."
+    },
+    "signature_algorithm": {
+      "value": "ml-dsa-65-fips204-v1",
+      "rule": "The active signature-algorithm tag carried alongside a signature value."
+    },
+    "composite_profile": {
+      "value": "p256-mldsa65/1",
+      "rule": "The composite signature profile: ECDSA P-256 AND ML-DSA-65, both required. The profile id is framed into M′ before signing, so it is part of what is signed and not merely a label."
+    }
+  },
+  "system_constant_cases": [
+    {
+      "name": "system_id is exact",
+      "field": "system_id",
+      "candidate": "certcrypt",
+      "expected_outcome": "accepted"
+    },
+    {
+      "name": "system_id case variation rejected",
+      "field": "system_id",
+      "candidate": "CERTCRYPT",
+      "expected_outcome": "rejected",
+      "why": "the comparison is byte-exact, not case-folded — these are different bytes in a signed preimage"
+    },
+    {
+      "name": "system_id with surrounding space rejected",
+      "field": "system_id",
+      "candidate": " certcrypt",
+      "expected_outcome": "rejected",
+      "why": "no trimming: an implementation that trims before comparing accepts bytes it would not itself produce"
+    },
+    {
+      "name": "unknown system_id rejected",
+      "field": "system_id",
+      "candidate": "someone-else",
+      "expected_outcome": "rejected"
+    }
+  ],
+  "must_hold": [
+    "a set of exactly 64 members is admitted, and 65 is not",
+    "an empty set is refused where the set is assembled, not at the transport layer",
+    "system_id, the signature-algorithm tag and the composite profile id are compared byte-exactly — no case folding, no trimming, no default",
+    "these constants appear inside signed preimages, so a divergent value changes the digest rather than only the label"
+  ]
+}

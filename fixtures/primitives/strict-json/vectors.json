@@ -1,0 +1,126 @@
+{
+  "primitive": "strict_json_parse",
+  "description": "Strict JSON parsing shared by every CERTCRYPT JSON input: the CCSP/1 certificate and the other artifacts a verifier reads (CCSP/1 §8.1), and the material of the JSON subject profiles subject.ai-decision/1, subject.collection/1 and subject.context-snapshot/1. The input MUST be RFC 8259 JSON, and no object may repeat a member name at any depth. Member names are compared after their escapes are decoded, so \"anchor\" and \"\\u0061nchor\" are the same name. Only object members are compared: repeated array elements are ordinary data, and the same name in two different objects is not a duplicate. A parser that keeps the first or the last of two duplicates reads a different value than one that keeps the other, so a duplicate is non-conformant and fails closed; no first-wins, last-wins or merge reading is allowed.",
+  "cases": [
+    {
+      "name": "top-level duplicate",
+      "json_text": "{\"anchor\":1,\"anchor\":2}",
+      "expected": "REJECTED",
+      "why": "the same member name twice in one object"
+    },
+    {
+      "name": "duplicate spelled with an escape",
+      "json_text": "{\"anchor\":1,\"\\u0061nchor\":2}",
+      "expected": "REJECTED",
+      "why": "names are compared after decoding; \\u0061nchor decodes to anchor"
+    },
+    {
+      "name": "duplicate nested two levels down",
+      "json_text": "{\"payload\":{\"anchor\":{\"nonce_hex\":\"aa\",\"nonce_hex\":\"bb\"}}}",
+      "expected": "REJECTED",
+      "why": "the rule applies at every depth"
+    },
+    {
+      "name": "duplicate inside an object inside an array",
+      "json_text": "{\"signatures\":[{\"role\":\"issuer\",\"role\":\"witness\"}]}",
+      "expected": "REJECTED",
+      "why": "an object inside an array is still an object"
+    },
+    {
+      "name": "duplicate inside metadata",
+      "json_text": "{\"metadata\":{\"note\":\"a\",\"note\":\"b\"}}",
+      "expected": "REJECTED",
+      "why": "no object is exempt: metadata is hashed with the rest of the certificate"
+    },
+    {
+      "name": "duplicate after a nested object closes",
+      "json_text": "{\"a\":{\"b\":1},\"c\":[{\"d\":[2]}],\"a\":3}",
+      "expected": "REJECTED",
+      "why": "the outer object's names survive the nested containers between them"
+    },
+    {
+      "name": "repeated strings in an array",
+      "json_text": "{\"a\":[\"x\",\"y\",\"y\"]}",
+      "expected": "ACCEPT",
+      "why": "array elements are data, not member names"
+    },
+    {
+      "name": "identical objects in an array",
+      "json_text": "[{\"x\":1},{\"x\":1}]",
+      "expected": "ACCEPT",
+      "why": "each object has its own set of member names"
+    },
+    {
+      "name": "same name in sibling objects",
+      "json_text": "{\"a\":{\"x\":1},\"b\":{\"x\":1}}",
+      "expected": "ACCEPT",
+      "why": "a duplicate is a repetition inside ONE object"
+    },
+    {
+      "name": "same name at different depths",
+      "json_text": "{\"x\":{\"x\":{\"x\":\"x\"}}}",
+      "expected": "ACCEPT",
+      "why": "nested objects do not share member names with their parent"
+    },
+    {
+      "name": "byte-order mark before the value",
+      "json_text": "\ufeff{}",
+      "expected": "REJECTED",
+      "why": "RFC 8259 text does not start with U+FEFF; CCSP/1 §8.1 admits no BOM"
+    },
+    {
+      "name": "trailing comma",
+      "json_text": "{\"a\":1,}",
+      "expected": "REJECTED",
+      "why": "not RFC 8259 JSON"
+    },
+    {
+      "name": "non-finite number",
+      "json_text": "{\"a\":NaN}",
+      "expected": "REJECTED",
+      "why": "NaN and Infinity are not JSON"
+    },
+    {
+      "name": "content after the value",
+      "json_text": "{\"a\":1}{\"a\":2}",
+      "expected": "REJECTED",
+      "why": "one document carries exactly one value"
+    }
+  ],
+  "profile_material_cases": [
+    {
+      "name": "subject.ai-decision/1 record with decision twice",
+      "profile": "subject.ai-decision/1",
+      "material_utf8": "{\"profile\":\"subject.ai-decision/1\",\"decision_id\":\"synthetic-event-01\",\"decided_at\":\"2026-06-17T10:30:00.000Z\",\"model\":{\"id\":\"synthetic-model\",\"provider\":\"synthetic-runtime\"},\"observation_scope\":\"client\",\"input\":[{\"id\":\"prompt\",\"role\":\"prompt\",\"media_type\":\"text/plain\",\"profile\":\"subject.text/1\",\"material_nonce_hex\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"commitment_digest_hex\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}],\"output\":[{\"id\":\"answer\",\"role\":\"response\",\"media_type\":\"text/plain\",\"profile\":\"subject.text/1\",\"material_nonce_hex\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"commitment_digest_hex\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"}],\"decision\":\"category-a\",\"decision\":\"category-b\"}",
+      "expected_outcome": "REJECTED",
+      "why": "one reader would see approved and another rejected; the profile is undefined for this material"
+    },
+    {
+      "name": "subject.collection/1 descriptor with declared_cardinality twice",
+      "profile": "subject.collection/1",
+      "material_utf8": "{\"commitment_scheme\":\"collection.merkle-sha3-256/1\",\"root\":\"326fce21ee9bf021ff83b83fc16aae00455c7d88b00da3345daad4f810c6544a\",\"declared_cardinality\":\"1\",\"declared_cardinality\":\"2\",\"leaves\":[{\"profile\":\"subject.binary/1\",\"commitment_digest_hex\":\"84ee4efec704171280f128479ed1bfa93f3346a91c529af84a91019444ced5aa\"}]}",
+      "expected_outcome": "REJECTED",
+      "why": "two cardinalities, two different collections"
+    },
+    {
+      "name": "subject.context-snapshot/1 entry with an escaped duplicate",
+      "profile": "subject.context-snapshot/1",
+      "material_utf8": "{\"context_set_id\":\"ctx-1\",\"entries\":[{\"issuer_id\":\"acme\",\"status\":\"active\",\"st\\u0061tus\":\"revoked\"}]}",
+      "expected_outcome": "REJECTED",
+      "why": "st\\u0061tus decodes to status: the entry would be active to one reader and revoked to another"
+    },
+    {
+      "name": "subject.context-snapshot/1 with repeated array elements",
+      "profile": "subject.context-snapshot/1",
+      "material_utf8": "{\"context_set_id\":\"ctx-1\",\"tags\":[\"a\",\"a\",\"b\"],\"entries\":[{\"issuer_id\":\"acme\"},{\"issuer_id\":\"acme\"}]}",
+      "expected_outcome": "ACCEPT",
+      "why": "repeated array elements and identical objects in an array are data; the material is conformant"
+    }
+  ],
+  "must_hold": [
+    "every case with expected REJECTED fails to parse; no value is produced for it",
+    "every case with expected ACCEPT parses, and the value is the one an ordinary RFC 8259 parser produces",
+    "every profile material case with expected_outcome REJECTED is refused before canonicalization: canonical_bytes is undefined for it",
+    "duplicate detection compares decoded member names, never their raw spelling"
+  ]
+}

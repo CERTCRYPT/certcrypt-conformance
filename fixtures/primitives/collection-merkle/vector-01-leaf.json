@@ -1,0 +1,18 @@
+{
+  "label": "single-leaf tree",
+  "commitment_scheme": "collection.merkle-sha3-256/1",
+  "leaf_profile": "subject.binary/1",
+  "declared_cardinality": "1",
+  "leaves_hex": [
+    "7630313a30"
+  ],
+  "root": "f00e464f177d4a0863c0bc781b81b696decfbd950a99650d274e2980aa22db19",
+  "inclusion_proofs": [
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "0",
+      "sibling_hashes": []
+    }
+  ],
+  "collection_salt_hex": "101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f"
+}

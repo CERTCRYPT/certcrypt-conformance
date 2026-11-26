@@ -1,0 +1,40 @@
+{
+  "primitive": "subject_binary_canonicalization",
+  "description": "canonical_bytes(subject) for subject.binary/1 (verifier-toolkit/1 §8.5 + subject.binary/1 §7): the canonical bytes ARE the exact input bytes — byte-identity, opaque, no transformation of any kind. The verifier derives subject_local_digest_hex = SHA3-256(canonical_bytes) and the CCCP/1 commitment SHA3-256(ASCII(nonce_hex) || ASCII(subject_local_digest_hex)). These vectors pin the edge cases (empty subject, embedded NUL, leading BOM) so no implementation adds a hidden normalization.",
+  "profile": "subject.binary/1",
+  "canonicalization": "identity: canonical_bytes = exact input bytes; no decode/transcode/normalize/decompress/BOM-strip; embedded NUL preserved; no length limit",
+  "commitment_construction": "commitment_digest_hex = SHA3-256(ASCII(nonce_hex) || ASCII(subject_local_digest_hex)); all lowercase hex, ASCII concatenation of the hex strings (NOT the binary digests) — CCCP/1 §8.1",
+  "nonce_hex": "abababababababababababababababababababababababababababababababab",
+  "vectors": [
+    {
+      "name": "empty subject",
+      "input_hex": "",
+      "subject_local_digest_hex": "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a",
+      "expected_commitment_digest_hex": "5c140a37ca74910a9c2a15cd709d7d00d2ed8d079b4b257d54858d9ae0780286"
+    },
+    {
+      "name": "ascii subject (matches original-material index 0)",
+      "input_hex": "68656c6c6f206365727463727970742062696e617279207375626a656374",
+      "subject_local_digest_hex": "155ab9b99e82f2331e27470dfaa24bc11a714c7c2e222bf707f2901d14e2323a",
+      "expected_commitment_digest_hex": "dbded2a9a61e7e890bc4a762732d17c2beeaf1af2882ddd4053c259a0425f01d"
+    },
+    {
+      "name": "embedded NUL preserved (not a terminator)",
+      "input_hex": "610062",
+      "subject_local_digest_hex": "b476fd9cc202c304856e5b838839a737fbaaa96a2f44808f8c28c8cff135db22",
+      "expected_commitment_digest_hex": "46fbf83248212de6dc5b8dc0caf0da744e356f972c13da6d4b1b21492e211d70"
+    },
+    {
+      "name": "leading BOM preserved (not stripped)",
+      "input_hex": "efbbbf61",
+      "subject_local_digest_hex": "22d53cdd5a833b8ba5ef4de58cab0df1fb6323e225dc90478fb4d2072aed0720",
+      "expected_commitment_digest_hex": "6041c048d6da971c988a6c4610b8ad5fcad9e3d6f57a754c22f0cd770a3b2b67"
+    }
+  ],
+  "must_hold": [
+    "canonical_bytes is byte-identity: no normalization, transcoding, decompression, BOM stripping, or member reordering",
+    "the empty byte sequence is a valid subject; its digest is SHA3-256(\"\")",
+    "embedded NUL (0x00) is preserved; no byte is treated as a terminator; there is no length limit",
+    "the commitment concatenates the ASCII bytes of the lowercase hex strings, not the decoded 32-byte digests (CCCP/1 §8.1)"
+  ]
+}

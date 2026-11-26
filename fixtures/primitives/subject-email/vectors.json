@@ -1,0 +1,121 @@
+{
+  "primitive": "subject_email_canonicalization",
+  "description": "canonical_bytes(subject) for subject.email/1 (verifier-toolkit/1 §8.5 + subject.email/1 §11): operate on RAW bytes (subject context is opaque per CCCP/1 §6.2). Step 1 (§11.2): global line-ending normalization to CRLF (single left-to-right pass, CRLF longest-match). Step 2 (§11.3): split at the FIRST CRLF CRLF (the 4-byte delimiter is removed from both sides); if absent, the whole message is headers and body is empty; a message beginning with CRLF CRLF has empty headers. Step 3 (§11.4): unfold headers ONLY as in RFC 5322 §2.2.3 -- each CRLF immediately followed by a WSP byte (SP 0x20 or HTAB 0x09) is deleted (CRLF removed, the following WSP preserved byte-for-byte, including SP-vs-HTAB identity and run length); order/names/values otherwise preserved. Step 4 (§11.5): body trailing-terminator normalization -- if body non-empty, strip its trailing run of CRLFs and append exactly one CRLF; empty body stays empty. Step 5 (§11.6): assemble headers_unfolded || CRLF CRLF || body_terminated, delimiter ALWAYS present. Canonicalization is idempotent. subject_local_digest_hex = SHA3-256(canonical_bytes).",
+  "profile": "subject.email/1",
+  "canonicalization": "§11.2 global CRLF normalization -> §11.3 split at first CRLF CRLF -> §11.4 unfold headers (RFC 5322: delete CRLF-before-WSP, preserve WSP) -> §11.5 body trailing-terminator normalization (non-empty body ends in exactly one CRLF) -> §11.6 headers || CRLF CRLF || body",
+  "digest": "subject_local_digest_hex = SHA3-256(canonical_bytes), 32 bytes lowercase hex; verifier-local, never published",
+  "byte_notation": "input_hex and canonical_hex are space-free lowercase hex of the raw byte sequence; 'A' = 0x41, ':' = 0x3a, 'b'=0x62, etc.",
+  "vectors": [
+    {
+      "name": "headers + body, CRLF delimiter",
+      "input_hex": "413a620d0a0d0a63",
+      "canonical_hex": "413a620d0a0d0a630d0a",
+      "subject_local_digest_hex": "b6914d2e5aca160204bfa11b76501b7d3ef4f9ad2cfaba04843b9485cfbfc889"
+    },
+    {
+      "name": "LF-only delimiter normalized to CRLF (same canonical)",
+      "input_hex": "413a620a0a63",
+      "canonical_hex": "413a620d0a0d0a630d0a",
+      "subject_local_digest_hex": "b6914d2e5aca160204bfa11b76501b7d3ef4f9ad2cfaba04843b9485cfbfc889"
+    },
+    {
+      "name": "no delimiter -> headers only, empty body, delimiter appended",
+      "input_hex": "413a62",
+      "canonical_hex": "413a620d0a0d0a",
+      "subject_local_digest_hex": "6619ff5b04fce3d4cfeb9a594f909c798cf66b243750094d16cec09bc6d4a704"
+    },
+    {
+      "name": "folded header (CRLF SP) unfolds by deleting CRLF; the SP is preserved",
+      "input_hex": "413a620d0a20630d0a0d0a64",
+      "canonical_hex": "413a6220630d0a0d0a640d0a",
+      "subject_local_digest_hex": "f7a41b2982422208df692070a2fa361fa31c0541cfa7747c346205d0284b901b"
+    },
+    {
+      "name": "folded header at HTAB: CRLF deleted, HTAB preserved (RFC 5322 unfolding)",
+      "input_hex": "413a620d0a09630d0a0d0a64",
+      "canonical_hex": "413a6209630d0a0d0a640d0a",
+      "subject_local_digest_hex": "432f9f81c449848eef42f887a93451fe82ed682bffdbc54c55818e7f1063ff7d"
+    },
+    {
+      "name": "folded multi-WSP run (SP SP HTAB): CRLF deleted, whole WSP run preserved",
+      "input_hex": "413a620d0a202009630d0a0d0a",
+      "canonical_hex": "413a62202009630d0a0d0a",
+      "subject_local_digest_hex": "847aea725ed70cff46625a3e1c37c4c531694b73027d8be2eb105afba3bddcdc"
+    },
+    {
+      "name": "empty headers (message begins with CRLF CRLF)",
+      "input_hex": "0d0a0d0a626f6479",
+      "canonical_hex": "0d0a0d0a626f64790d0a",
+      "subject_local_digest_hex": "da06916b3b0088c3419f2659deb257f5e9ec8741454cd9712191bd532deb5402"
+    },
+    {
+      "name": "3 CRLFs: only first CRLF CRLF is delimiter; body 'CRLF c' gains one trailing CRLF",
+      "input_hex": "413a620d0a0d0a0d0a63",
+      "canonical_hex": "413a620d0a0d0a0d0a630d0a",
+      "subject_local_digest_hex": "72da0f9c3186d6784f60b97310bf65072691b398ae81dae42ca390a3ebca601e"
+    },
+    {
+      "name": "empty input (0 bytes): empty headers, empty body, delimiter only",
+      "input_hex": "",
+      "canonical_hex": "0d0a0d0a",
+      "subject_local_digest_hex": "f34c5f656372916c768e5c5c4d86dcbdd381f09691e3835cba37c610391b8850"
+    },
+    {
+      "name": "lone CR CR -> two line breaks -> delimiter",
+      "input_hex": "0d0d",
+      "canonical_hex": "0d0a0d0a",
+      "subject_local_digest_hex": "f34c5f656372916c768e5c5c4d86dcbdd381f09691e3835cba37c610391b8850"
+    },
+    {
+      "name": "LF CR -> two line breaks, not one",
+      "input_hex": "0a0d",
+      "canonical_hex": "0d0a0d0a",
+      "subject_local_digest_hex": "f34c5f656372916c768e5c5c4d86dcbdd381f09691e3835cba37c610391b8850"
+    },
+    {
+      "name": "double-conversion CR CR LF: each becomes two CRLFs; header B:c reclassified as body",
+      "input_hex": "413a620d0d0a423a630d0d0a0d0d0a64",
+      "canonical_hex": "413a620d0a0d0a423a630d0a0d0a0d0a0d0a640d0a",
+      "subject_local_digest_hex": "33f55c3195caf1e7f3f59ecee97de966a767268601e49207b5779c2b91edc385"
+    },
+    {
+      "name": "folded header, no delimiter: whole input is headers",
+      "input_hex": "413a620d0a2063",
+      "canonical_hex": "413a6220630d0a0d0a",
+      "subject_local_digest_hex": "9f4196410f48b80cf6bce81cad73c1820f5c9a5e63e4c899dddc218945b53e1c"
+    },
+    {
+      "name": "fold run truncated by end of headers (CRLF SP then delimiter)",
+      "input_hex": "413a620d0a200d0a0d0a63",
+      "canonical_hex": "413a62200d0a0d0a630d0a",
+      "subject_local_digest_hex": "859ccb816a7fec1af4cc91567221c38ecaf98e924ff23fe432a6e5bd9395e7af"
+    },
+    {
+      "name": "SP after the delimiter belongs to the body; no unfolding across the delimiter",
+      "input_hex": "413a620d0a0d0a2063",
+      "canonical_hex": "413a620d0a0d0a20630d0a",
+      "subject_local_digest_hex": "256cb2a69bb8ced7c0286423ef0c91373190601e817bf85f9642362080febf04"
+    },
+    {
+      "name": "embedded NUL preserved; no delimiter",
+      "input_hex": "410042",
+      "canonical_hex": "4100420d0a0d0a",
+      "subject_local_digest_hex": "3e4b80f120043fc52798245f0a29aa13518a9ea186f3ee8b8dfc44cc8d5fe935"
+    },
+    {
+      "name": "idempotence: a value already produced by this profile canonicalizes to itself",
+      "input_hex": "413a620d0a0d0a",
+      "canonical_hex": "413a620d0a0d0a",
+      "subject_local_digest_hex": "6619ff5b04fce3d4cfeb9a594f909c798cf66b243750094d16cec09bc6d4a704"
+    }
+  ],
+  "must_hold": [
+    "global line-ending normalization runs before the split and applies to the whole message including the body; it reconciles single line breaks each represented as one of CR, LF, or CRLF, and does NOT reconcile a double conversion that represents one break as CR CR LF",
+    "split at the FIRST CRLF CRLF; the 4-byte delimiter is removed; further CRLFs belong to the body",
+    "unfolding applies to headers only and is RFC 5322 §2.2.3 unfolding: delete each CRLF immediately followed by a WSP byte and PRESERVE that WSP (SP or HTAB) unchanged; the WSP is neither collapsed nor rewritten; never unfold across the delimiter",
+    "body trailing-terminator normalization applies to the body only: a non-empty body ends in exactly one CRLF (trailing CRLF run collapsed, or one appended if absent); an empty body stays empty",
+    "final assembly always inserts exactly CRLF CRLF between headers and body, even when headers or body are empty",
+    "canonicalization is idempotent: re-canonicalizing a canonical value reproduces it",
+    "subject_local_digest_hex = SHA3-256(canonical_bytes), verifier-local, never published"
+  ]
+}

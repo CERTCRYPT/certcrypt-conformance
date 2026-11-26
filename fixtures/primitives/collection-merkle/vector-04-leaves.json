@@ -1,0 +1,48 @@
+{
+  "label": "four-leaf balanced tree",
+  "commitment_scheme": "collection.merkle-sha3-256/1",
+  "leaf_profile": "subject.binary/1",
+  "declared_cardinality": "4",
+  "leaves_hex": [
+    "7630343a30",
+    "7630343a31",
+    "7630343a32",
+    "7630343a33"
+  ],
+  "root": "7fab4736543e6194f68a6e54de1664d783cd37c2c22e45e3b54dcab6fb105f76",
+  "inclusion_proofs": [
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "0",
+      "sibling_hashes": [
+        "b8a068e604821b80932f0e83cedb80e01c8a05dc1498bf7d499a4d97fbf8d956",
+        "6f09de9f90e10f1fb36f7317c4ece47ffbfa22db80e0c0f83acd0dfe6f4e0a3c"
+      ]
+    },
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "1",
+      "sibling_hashes": [
+        "4f7924934bdbb795d02b1baf20c5b73e54a71133d4545d2df20378bb483d1281",
+        "6f09de9f90e10f1fb36f7317c4ece47ffbfa22db80e0c0f83acd0dfe6f4e0a3c"
+      ]
+    },
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "2",
+      "sibling_hashes": [
+        "cf5afe2d7ee81da614c7b32d0540a9e1413d426838e34df823a0551a690d0432",
+        "2f04f3af0ad8a00260069ca8cbff0d0599016ccc5c542e40e212969068de2051"
+      ]
+    },
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "3",
+      "sibling_hashes": [
+        "6393b5a8c007efffed5bd1b6a10bc043d9b15fc8cfb3b86a95b18b47ee6ae8c4",
+        "2f04f3af0ad8a00260069ca8cbff0d0599016ccc5c542e40e212969068de2051"
+      ]
+    }
+  ],
+  "collection_salt_hex": "101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f"
+}

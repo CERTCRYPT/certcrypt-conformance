@@ -1,0 +1,152 @@
+{
+  "primitive": "signed-artifact field sets",
+  "description": "The EXACT set of fields in each signed preimage, and what happens when that set is wrong. Fixes the one class of divergence every digest vector misses.",
+  "why_this_is_a_primitive": "Every other vector answers 'given these inputs, are the bytes right?'. This one answers 'are these the right inputs at all?'. An implementation that omits a field from a signed preimage, or carries one the contract does not have, computes a PERFECTLY VALID digest over the wrong object. Its own tests pass, the digest vectors pass, and the divergence only surfaces when a second implementation verifies the signature and fails. Pinning the field set is the only check that fires at the producer.",
+  "how_to_use_this_vector": "For each artifact below, compare the field set of your own type against `fields` — as a SET, both directions. Missing a field means you sign fewer bytes than the contract; carrying an extra means you sign more. Reading the fields you know is not enough: that only proves you can find yours, never that the contract has grown one you ignore.",
+  "ordering_note": "`fields` is listed in the artifact's canonical order, which matters only for the insertion-ordered artifacts (marked below). For the JCS ones the order here is documentary — JCS sorts keys — but the SET is normative either way.",
+  "artifacts": [
+    {
+      "artifact": "capacity.holder-authorization/1 — Level-1 binding",
+      "canonicalization": "insertion-ordered (NOT JCS)",
+      "signed_by": "the system-domain Level-1 key",
+      "fields": [
+        "system_id",
+        "rules_version",
+        "system_root_fingerprint",
+        "authorized_role",
+        "authorization_issuer_kid",
+        "valid_from",
+        "valid_until",
+        "holder_key_set_root"
+      ],
+      "field_count": 8,
+      "byte_contract": "see level1-binding/vectors.json for the exact bytes"
+    },
+    {
+      "artifact": "capacity.evidence/1 — projected commitment",
+      "canonicalization": "insertion-ordered (NOT JCS)",
+      "signed_by": "the holder's disclosed operation-key leaf",
+      "fields": [
+        "commitment_version",
+        "system_id",
+        "system_root_fingerprint",
+        "rules_version",
+        "authorization_pseudonym",
+        "holder_pseudonym",
+        "pool_pseudonym",
+        "certificate_commitment_digest",
+        "consumed_quantity",
+        "declared_effective_units",
+        "issued_at",
+        "expires_at"
+      ],
+      "field_count": 12,
+      "byte_contract": "see capacity-evidence/vectors.json for the exact bytes"
+    },
+    {
+      "artifact": "operator.receipt/1",
+      "canonicalization": "JCS (RFC 8785, sorted keys) over the no-signature view",
+      "signed_by": "the transporting operator's key",
+      "fields": [
+        "receipt_version",
+        "operator_id",
+        "submission_set_id",
+        "system_id",
+        "rules_version",
+        "issued_at"
+      ],
+      "field_count": 6,
+      "excluded_from_signing": [
+        "signature"
+      ],
+      "byte_contract": "see operator-receipt/vectors.json for the exact bytes"
+    },
+    {
+      "artifact": "settlement leaf preimage (ccab1-leaf)",
+      "canonicalization": "insertion-ordered (NOT JCS)",
+      "hash_rule": "SHA3-256(0x00 || bytes)",
+      "fields": [
+        "v",
+        "system_id",
+        "rules_version",
+        "settlement_profile_id",
+        "batch_id",
+        "leaf_index",
+        "subtree_root",
+        "cost_commitment",
+        "consumed_quantity"
+      ],
+      "field_count": 9,
+      "byte_contract": "see settlement-preimages/vectors.json"
+    },
+    {
+      "artifact": "settlement batch-binding preimage (ccab1)",
+      "canonicalization": "insertion-ordered (NOT JCS)",
+      "digest_use": "the memo is SETTLEMENT_MEMO_PREFIX || SHA3-256(bytes)",
+      "fields": [
+        "v",
+        "system_id",
+        "rules_version",
+        "settlement_profile_id",
+        "batch_id",
+        "window_id",
+        "leaf_count",
+        "total_quantity",
+        "settlement_root"
+      ],
+      "field_count": 9,
+      "byte_contract": "see settlement-preimages/vectors.json"
+    }
+  ],
+  "shape_cases": [
+    {
+      "name": "exact field set",
+      "scenario": "the producer's type carries precisely the fields listed for the artifact",
+      "expected_outcome": "accepted",
+      "why": "the only admissible shape"
+    },
+    {
+      "name": "missing field",
+      "scenario": "a field in `fields` is absent from the producer's preimage",
+      "expected_outcome": "rejected",
+      "why": "fewer bytes are signed than the contract fixes. The digest is internally consistent, so nothing local catches it — a verifier reconstructing the full preimage computes a different digest and the signature fails"
+    },
+    {
+      "name": "extra field",
+      "scenario": "the producer's preimage carries a field not in `fields`",
+      "expected_outcome": "rejected",
+      "why": "THE case this vector exists for. More bytes are signed than the contract fixes. A consumer that reads only the fields it knows validates every one of them and still hashes a different object. No digest vector detects this, because each digest is correct for the object that was hashed"
+    },
+    {
+      "name": "renamed field",
+      "scenario": "a field carries the right value under a different key",
+      "expected_outcome": "rejected",
+      "why": "a rename is simultaneously a missing field and an extra one; it is called out separately because it is what a refactor produces, and because a reader with a lenient default may see an empty value rather than an absent one"
+    },
+    {
+      "name": "field present but empty",
+      "scenario": "a required field is serialized as the empty string",
+      "expected_outcome": "rejected",
+      "why": "an empty value is not an absent field: it changes the bytes without changing the shape, so the field-set check alone passes. Producers must refuse to sign a preimage with an unset required field rather than defaulting it"
+    },
+    {
+      "name": "field order changed in an insertion-ordered artifact",
+      "scenario": "the fields of level1-binding, capacity.evidence or a settlement preimage are emitted in a different order",
+      "expected_outcome": "rejected",
+      "why": "these artifacts sign insertion order, not sorted order. The SET is unchanged, so a set comparison passes — this is why the byte vectors and this shape vector are both needed, and neither replaces the other"
+    },
+    {
+      "name": "signature included in the signed view",
+      "scenario": "operator.receipt/1 canonicalized WITH its signature field",
+      "expected_outcome": "rejected",
+      "why": "the signature cannot be part of what it signs. The no-signature view is what gets canonicalized; including it is unsatisfiable and must fail at the producer"
+    }
+  ],
+  "must_hold": [
+    "each artifact's field set is compared in BOTH directions: no field missing, no field extra",
+    "a field set that matches is still not sufficient — the byte vectors fix order and encoding",
+    "an extra field in a signed preimage is a divergence even when every digest computed over it is correct",
+    "a required field present but empty is refused at the producer, not defaulted",
+    "operator.receipt/1 is canonicalized over the no-signature view"
+  ]
+}

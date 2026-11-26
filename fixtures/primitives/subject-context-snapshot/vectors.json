@@ -1,0 +1,145 @@
+{
+  "primitive": "subject_context_snapshot_canonicalization",
+  "description": "canonical_bytes(subject) for subject.context-snapshot/1 (verifier-toolkit/1 §8.5 + subject.context-snapshot/1 §7): the subject is exactly the payload.snapshot JSON value, canonicalized as the UTF-8 bytes of its RFC 8785 (JCS) serialization. Per §7.1, every numeric-looking value MUST be carried as a JSON string and the object MUST contain no JSON number token at any depth, so RFC 8785 number serialization never applies — JCS reduces to deterministic key ordering and string escaping, which conforming JCS libraries implement identically across languages. Array order is significant (JCS does not reorder). subject_local_digest_hex = SHA3-256(canonical_bytes).",
+  "profile": "subject.context-snapshot/1",
+  "canonicalization": "RFC 8785 JCS of the payload.snapshot value; all numeric-looking fields are strings (no JSON number tokens); array order preserved",
+  "digest": "subject_local_digest_hex = SHA3-256(canonical_bytes), 32 bytes lowercase hex; verifier-local, never published",
+  "vectors": [
+    {
+      "name": "all-strings snapshot with ordered entries array",
+      "snapshot_object": {
+        "context_set_id": "ctx-1",
+        "snapshot_id": "snap-1",
+        "issued_at": "2026-04-12T10:00:00Z",
+        "entries": [
+          {
+            "issuer_id": "iss-A",
+            "seq": "1"
+          },
+          {
+            "issuer_id": "iss-B",
+            "seq": "2"
+          }
+        ],
+        "status": "active"
+      },
+      "expected_canonical_utf8": "{\"context_set_id\":\"ctx-1\",\"entries\":[{\"issuer_id\":\"iss-A\",\"seq\":\"1\"},{\"issuer_id\":\"iss-B\",\"seq\":\"2\"}],\"issued_at\":\"2026-04-12T10:00:00Z\",\"snapshot_id\":\"snap-1\",\"status\":\"active\"}",
+      "subject_local_digest_hex": "f561c27d00a1cb7f26cf3079cb78f02f7f49912acd21c395b0b9d0613b5f0305"
+    },
+    {
+      "name": "array order is significant: same entries reversed -> different digest (contrast with vector 1)",
+      "snapshot_object": {
+        "context_set_id": "ctx-1",
+        "snapshot_id": "snap-1",
+        "issued_at": "2026-04-12T10:00:00Z",
+        "entries": [
+          {
+            "issuer_id": "iss-B",
+            "seq": "2"
+          },
+          {
+            "issuer_id": "iss-A",
+            "seq": "1"
+          }
+        ],
+        "status": "active"
+      },
+      "expected_canonical_utf8": "{\"context_set_id\":\"ctx-1\",\"entries\":[{\"issuer_id\":\"iss-B\",\"seq\":\"2\"},{\"issuer_id\":\"iss-A\",\"seq\":\"1\"}],\"issued_at\":\"2026-04-12T10:00:00Z\",\"snapshot_id\":\"snap-1\",\"status\":\"active\"}",
+      "subject_local_digest_hex": "7db1b06ff82fe59dbcd5f432baf4ef2dd206011b9d8db65cd92d02e461b38077"
+    },
+    {
+      "name": "UTF-16 code-unit key sort: a supplementary-plane key sorts by its high surrogate (below U+E000), NOT by code point",
+      "note": "RFC 8785 §3.2.3 sorts keys by UTF-16 code unit. U+1F600 encodes as the surrogate pair D83D DE00; its first code unit 0xD83D is BELOW the BMP key U+E000, so the order is 'z' (007A) < U+1F600 < U+E000. A code-point sort would place U+E000 (57344) before U+1F600 (128512) and produce different bytes. This is the one documented case where a naive code-point sort diverges cross-language; pin it.",
+      "snapshot_object": {
+        "z": "1",
+        "😀": "2",
+        "": "3"
+      },
+      "expected_canonical_utf8": "{\"z\":\"1\",\"😀\":\"2\",\"\":\"3\"}",
+      "subject_local_digest_hex": "7413127bc2a98d1baeb78eacb62185b03b0052ce354b9e07f7df527eb04f0ded"
+    }
+  ],
+  "negative_cases": [
+    {
+      "name": "JSON number token -> non-conformant",
+      "snapshot_object": {
+        "count": 3
+      },
+      "expected_outcome": "REJECTED",
+      "why": "a JSON number token anywhere violates the string-only discipline; the profile does not apply (SubjectPreconditionError)"
+    },
+    {
+      "name": "number nested inside an array -> non-conformant (depth-recursive)",
+      "snapshot_object": {
+        "nested": {
+          "deep": [
+            "ok",
+            3
+          ]
+        }
+      },
+      "expected_outcome": "REJECTED",
+      "why": "the string-only discipline is recursive; a number at any depth (here inside a nested array) is non-conformant"
+    }
+  ],
+  "must_hold": [
+    "the subject is exactly payload.snapshot (not the enclosing payload, not a subset)",
+    "JCS sorts object keys by UTF-16 code unit per RFC 8785; array order is NOT sorted and is significant",
+    "a supplementary-plane key sorts by its UTF-16 high surrogate, NOT by code point (see the UTF-16 vector)",
+    "every numeric-looking value is a string; a JSON number token anywhere makes the object non-conformant (the profile does not apply and the implementation MUST fail closed); booleans and nulls are preserved as such (see positive_cases)",
+    "two snapshots with identical content but different array order produce different canonical bytes and are distinct snapshots",
+    "subject_local_digest_hex = SHA3-256(canonical_bytes), verifier-local, never published"
+  ],
+  "positive_cases": [
+    {
+      "name": "CCVP/1 7.1 normative entry shape",
+      "snapshot_object": {
+        "context_set_id": "ctx-1",
+        "snapshot_issuer_id": "iss-1",
+        "issued_at": "2026-01-01T00:00:00Z",
+        "entries": [
+          {
+            "issuer_id": "acme",
+            "kid": "k1",
+            "pub_fingerprint_digest_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+            "status": "active",
+            "valid_from": "2026-01-01T00:00:00Z",
+            "valid_to": null,
+            "revoked_at": null,
+            "revocation_reason": null,
+            "roles": [
+              "issuer"
+            ]
+          }
+        ]
+      },
+      "expected_canonical_bytes_utf8": "{\"context_set_id\":\"ctx-1\",\"entries\":[{\"issuer_id\":\"acme\",\"kid\":\"k1\",\"pub_fingerprint_digest_hex\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"revocation_reason\":null,\"revoked_at\":null,\"roles\":[\"issuer\"],\"status\":\"active\",\"valid_from\":\"2026-01-01T00:00:00Z\",\"valid_to\":null}],\"issued_at\":\"2026-01-01T00:00:00Z\",\"snapshot_issuer_id\":\"iss-1\"}",
+      "expected_digest_hex": "2dc55ac5705ce13c12bf65050fc6769756cf85ea2a1dd609a7f28f60c48d8862",
+      "why": "the governing protocol's own entry example: an open-ended eligibility window is a JSON null, and CCVP/1 8 reads `entry.valid_to is not null`. Spelling it as a string would be the coercion subject.context-snapshot/1 8 forbids"
+    },
+    {
+      "name": "booleans and nulls are preserved, not coerced",
+      "snapshot_object": {
+        "context_set_id": "c",
+        "snapshot_issuer_id": "i",
+        "enabled": true,
+        "superseded": false,
+        "withdrawn_at": null
+      },
+      "expected_canonical_bytes_utf8": "{\"context_set_id\":\"c\",\"enabled\":true,\"snapshot_issuer_id\":\"i\",\"superseded\":false,\"withdrawn_at\":null}",
+      "expected_digest_hex": "170b13fda2c54da8135880e2e0c0894b8dd47c0a20c067c0a05279df077994d7",
+      "why": "7 requires preserving the exact string, boolean, array, object and null semantics of the input. Both canonicalize identically across languages under RFC 8785 - unlike numbers, they are not a divergence vector"
+    },
+    {
+      "name": "key ordering and non-ASCII strings",
+      "snapshot_object": {
+        "z_last": "omega",
+        "a_first": "alpha",
+        "m_mid": "middle"
+      },
+      "expected_canonical_bytes_utf8": "{\"a_first\":\"alpha\",\"m_mid\":\"middle\",\"z_last\":\"omega\"}",
+      "expected_digest_hex": "b96a7ea15b4b50faa1cf6cc1ec3d0e9e7792c79ceaaa5cd351d07fece2df760b",
+      "why": "JCS sorts by UTF-16 code unit and escapes minimally; string content is preserved byte-for-byte"
+    }
+  ]
+}

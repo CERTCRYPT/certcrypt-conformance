@@ -1,0 +1,252 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://certcrypt.com/schemas/base-certificate.schema.json",
+  "title": "CERTCRYPT Base Certificate (CCSP/1)",
+  "description": "The shape of a CCSP/1 certificate. Passing this schema is necessary, not sufficient: the rules a schema cannot express are listed in `$comment` and decided by the verifier (duplicate member names, the calendar validity of `issued_at`, the recomputed digests and anchor commitment, the system and rules domain under evaluation, the admitted subject profiles, and the issuer signature itself).",
+  "$comment": "Not expressible here and enforced by a conformant verifier: (1) no object repeats a member name, at any depth, after escape decoding (CCSP/1 §8.1) — a JSON value has already lost its duplicates; (2) issued_at names a real calendar instant; (3) payload.anchor_commitment_digest_hex, payload.anchor_canon_digest_hex and payload_canon_digest_hex equal their recomputation (CCCP/1 §7.3, §8.2); (4) payload.system_id and payload.rules_version are the system domain and a rules version the verifier evaluates under; (5) every subject profile is admitted by the rules domain; (6) the issuer signature declares the rules domain's profile and verifies.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "payload",
+    "signatures"
+  ],
+  "properties": {
+    "schema": {
+      "description": "Structural discriminator. Exactly this value.",
+      "const": "certcrypt-certificate"
+    },
+    "metadata": {
+      "description": "Optional, unsigned, non-normative annotations. Never interpreted; hashed with the rest of the certificate by the emission binding.",
+      "type": "object"
+    },
+    "extensions": {
+      "description": "Optional, unsigned, non-normative extensions keyed by namespaced names. Never interpreted; hashed with the rest of the certificate by the emission binding.",
+      "type": "object"
+    },
+    "payload_canon_digest_hex": {
+      "description": "Optional publication of SHA3-256(JCS(payload)). Recomputed; a mismatch makes the certificate structurally invalid.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "payload": {
+      "description": "The signed statement. Open: members not named here are allowed, except the reserved names.",
+      "type": "object",
+      "required": [
+        "anchor",
+        "anchor_commitment_digest_hex",
+        "system_id",
+        "rules_version"
+      ],
+      "properties": {
+        "anchor": {
+          "$ref": "#/$defs/anchor"
+        },
+        "anchor_commitment_digest_hex": {
+          "description": "CCCP/1 §8.2 anchor commitment, SHA3-256(ASCII(nonce_hex) || ASCII(SHA3-256(JCS(anchor)))).",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "anchor_canon_digest_hex": {
+          "description": "Optional publication of SHA3-256(JCS(anchor)). Recomputed; a mismatch makes the certificate structurally invalid.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "system_id": {
+          "description": "The system domain the certificate is issued under.",
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[\\x21-\\x7e]+$"
+        },
+        "rules_version": {
+          "description": "The rules domain the certificate is issued under.",
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[\\x21-\\x7e]+$"
+        },
+        "consensus": false,
+        "economics": false
+      }
+    },
+    "signatures": {
+      "description": "Exactly one signature object: the issuer's composite signature.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "$ref": "#/$defs/issuer_signature"
+      }
+    }
+  },
+  "$defs": {
+    "anchor": {
+      "description": "The signed issuance-time root. Closed.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issued_at",
+        "nonce_hex",
+        "subjects"
+      ],
+      "properties": {
+        "issued_at": {
+          "description": "RFC 3339 instant in UTC: YYYY-MM-DDTHH:MM:SS[.fraction]Z, uppercase T and Z.",
+          "type": "string",
+          "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]{1,9})?Z$"
+        },
+        "nonce_hex": {
+          "description": "Per-certificate CSPRNG nonce (CCCP/1 §10).",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "root_id": {
+          "description": "Optional issuance-time root participation reference.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "subjects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "profile",
+              "commitment_digest_hex"
+            ],
+            "properties": {
+              "profile": {
+                "type": "string",
+                "pattern": "^subject\\.[a-z0-9][a-z0-9_.-]{0,63}/[1-9][0-9]*$"
+              },
+              "commitment_digest_hex": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "issuer_signature": {
+      "description": "The issuer's composite signature (composite-signature/1) over M' built from SHA3-256(JCS(payload)). Closed.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "alg",
+        "mode",
+        "sig_target",
+        "signatures",
+        "signer"
+      ],
+      "properties": {
+        "role": {
+          "const": "issuer"
+        },
+        "alg": {
+          "description": "Composite profile identifier. The rules domain fixes which one is admitted.",
+          "type": "string",
+          "pattern": "^[\\x21-\\x7e]+$"
+        },
+        "mode": {
+          "const": "AND"
+        },
+        "sig_target": {
+          "const": "payload_canon_digest_hex"
+        },
+        "kid": {
+          "description": "Optional, non-normative key label.",
+          "type": "string",
+          "pattern": "^[\\x21-\\x7e]+$",
+          "maxLength": 128
+        },
+        "signatures": {
+          "description": "The two components, ECDSA P-256 first and ML-DSA-65 second (CCSP/1 §7.4.2).",
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/component_ecdsa_p256"
+            },
+            {
+              "$ref": "#/$defs/component_mldsa65"
+            }
+          ]
+        },
+        "signer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "pub_p256_b64",
+            "pub_mldsa_b64"
+          ],
+          "properties": {
+            "id": {
+              "description": "Issuer-provided label; not an identity proof.",
+              "type": "string",
+              "pattern": "^[\\x21-\\x7e]+$",
+              "maxLength": 256
+            },
+            "pub_p256_b64": {
+              "description": "P-256 public key, SEC1 uncompressed (65 bytes, 0x04 prefix), base64.",
+              "type": "string",
+              "pattern": "^B[A-Za-z0-9+/]{86}=$"
+            },
+            "pub_mldsa_b64": {
+              "description": "ML-DSA-65 public key, raw FIPS 204 bytes, base64.",
+              "type": "string",
+              "minLength": 4,
+              "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+            }
+          }
+        }
+      }
+    },
+    "component_ecdsa_p256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "alg",
+        "encoding",
+        "low_s",
+        "sig_b64"
+      ],
+      "properties": {
+        "alg": {
+          "const": "ECDSA-P256-SHA3-256"
+        },
+        "encoding": {
+          "const": "raw-rs-64"
+        },
+        "low_s": {
+          "const": true
+        },
+        "sig_b64": {
+          "type": "string",
+          "minLength": 4,
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+        }
+      }
+    },
+    "component_mldsa65": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "alg",
+        "sig_b64"
+      ],
+      "properties": {
+        "alg": {
+          "const": "ML-DSA-65"
+        },
+        "sig_b64": {
+          "type": "string",
+          "minLength": 4,
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+        }
+      }
+    }
+  }
+}

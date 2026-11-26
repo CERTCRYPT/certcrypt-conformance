@@ -1,0 +1,8 @@
+{
+  "result_code": "INDEPENDENT_INVALID",
+  "verification_target": "Independent",
+  "failed_check_ids": [
+    "SYSTEM_ROOT_BINDING_VALID",
+    "CLONE_OR_FORK_REJECTED"
+  ]
+}

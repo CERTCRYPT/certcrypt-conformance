@@ -1,0 +1,174 @@
+{
+  "primitive": "subject_collection_canonicalization",
+  "description": "canonical_bytes(subject) for subject.collection/1 (verifier-toolkit/1 §8.5 + subject.collection/1 §7,§9): the UTF-8 bytes of the RFC 8785 (JCS) canonical serialization of the collection subject JSON value (exactly the four members of §7.6). subject_local_digest_hex = SHA3-256(canonical_bytes); the CCCP/1 commitment = SHA3-256(ASCII(nonce_hex) || ASCII(subject_local_digest_hex)) MUST equal the certificate's commitment_digest_hex. This pins the canonicalization of a collection subject in isolation (the merkle over its leaves is pinned separately by the collection-merkle primitive; the end-to-end pipeline by conformance/P007).",
+  "profile": "subject.collection/1",
+  "canonicalization": "rfc8785-jcs-utf8",
+  "digest": "sha3-256",
+  "nonce_hex": "abababababababababababababababababababababababababababababababab",
+  "vectors": [
+    {
+      "name": "three-leaf declared collection",
+      "collection_subject": {
+        "commitment_scheme": "collection.merkle-sha3-256/1",
+        "root": "ca64e2d65aeb748ae13aa24221e0403a0b6f4f388aa0128af0e652266b288720",
+        "declared_cardinality": "3",
+        "leaves": [
+          {
+            "profile": "subject.binary/1",
+            "commitment_digest_hex": "eb51ed96bd2d16f0a7c2566cc943a5dc83b0f3df6f7ad5a1e5f984cc46272368"
+          },
+          {
+            "profile": "subject.binary/1",
+            "commitment_digest_hex": "1855837561f7253fb16aeb5a091f6224d0cdae8132565a9ebfaf6df28602e3af"
+          },
+          {
+            "profile": "subject.binary/1",
+            "commitment_digest_hex": "10c0e790a18ef086b47cebab7d0c81c1fa23d7457ce0d92ac97ea1937f5769be"
+          }
+        ]
+      },
+      "expected_canonical_utf8": "{\"commitment_scheme\":\"collection.merkle-sha3-256/1\",\"declared_cardinality\":\"3\",\"leaves\":[{\"commitment_digest_hex\":\"eb51ed96bd2d16f0a7c2566cc943a5dc83b0f3df6f7ad5a1e5f984cc46272368\",\"profile\":\"subject.binary/1\"},{\"commitment_digest_hex\":\"1855837561f7253fb16aeb5a091f6224d0cdae8132565a9ebfaf6df28602e3af\",\"profile\":\"subject.binary/1\"},{\"commitment_digest_hex\":\"10c0e790a18ef086b47cebab7d0c81c1fa23d7457ce0d92ac97ea1937f5769be\",\"profile\":\"subject.binary/1\"}],\"root\":\"ca64e2d65aeb748ae13aa24221e0403a0b6f4f388aa0128af0e652266b288720\"}",
+      "expected_subject_local_digest_hex": "4d7ebd6d841858a8fb4c95f63709cffc28f24e57bba30111e354005483489bfb",
+      "expected_commitment_digest_hex": "32042b47513099963470bde980ab0058d97bae8b7af48a4ef1ababd07b7d7f49",
+      "leaf_materials_utf8": [
+        "collection-leaf-0",
+        "collection-leaf-1",
+        "collection-leaf-2"
+      ]
+    },
+    {
+      "name": "single-leaf declared collection (cardinality 1: root == the lone leaf hash)",
+      "collection_subject": {
+        "commitment_scheme": "collection.merkle-sha3-256/1",
+        "root": "326fce21ee9bf021ff83b83fc16aae00455c7d88b00da3345daad4f810c6544a",
+        "declared_cardinality": "1",
+        "leaves": [
+          {
+            "profile": "subject.binary/1",
+            "commitment_digest_hex": "84ee4efec704171280f128479ed1bfa93f3346a91c529af84a91019444ced5aa"
+          }
+        ]
+      },
+      "expected_canonical_utf8": "{\"commitment_scheme\":\"collection.merkle-sha3-256/1\",\"declared_cardinality\":\"1\",\"leaves\":[{\"commitment_digest_hex\":\"84ee4efec704171280f128479ed1bfa93f3346a91c529af84a91019444ced5aa\",\"profile\":\"subject.binary/1\"}],\"root\":\"326fce21ee9bf021ff83b83fc16aae00455c7d88b00da3345daad4f810c6544a\"}",
+      "expected_subject_local_digest_hex": "936aba3318ff410da4703e6e59822b4246ec54cc8f2f046758ba3fc521d699b2",
+      "expected_commitment_digest_hex": "8820ff12d82b93fe1d401418cae6786051e5140b963244bb2cbc8d14cdf02937",
+      "leaf_materials_utf8": [
+        "solo"
+      ]
+    },
+    {
+      "name": "two-leaf declared collection (cardinality 2: even width, one pairing)",
+      "collection_subject": {
+        "commitment_scheme": "collection.merkle-sha3-256/1",
+        "root": "8e12718053dde4d6f7b2e7be7dc913b9ae5e1a5c6e1ee8d34166cbde14d9a47b",
+        "declared_cardinality": "2",
+        "leaves": [
+          {
+            "profile": "subject.binary/1",
+            "commitment_digest_hex": "70b6c6ea89096f494b5ee646c9d5d0f1cca5e9b52bd2ce3dc907d84874e0bc56"
+          },
+          {
+            "profile": "subject.binary/1",
+            "commitment_digest_hex": "6574bbd4646fccc003938f4e6eb6714a6518125c35f50d77ee78d069577f2895"
+          }
+        ]
+      },
+      "expected_canonical_utf8": "{\"commitment_scheme\":\"collection.merkle-sha3-256/1\",\"declared_cardinality\":\"2\",\"leaves\":[{\"commitment_digest_hex\":\"70b6c6ea89096f494b5ee646c9d5d0f1cca5e9b52bd2ce3dc907d84874e0bc56\",\"profile\":\"subject.binary/1\"},{\"commitment_digest_hex\":\"6574bbd4646fccc003938f4e6eb6714a6518125c35f50d77ee78d069577f2895\",\"profile\":\"subject.binary/1\"}],\"root\":\"8e12718053dde4d6f7b2e7be7dc913b9ae5e1a5c6e1ee8d34166cbde14d9a47b\"}",
+      "expected_subject_local_digest_hex": "f92036dd26547dfb9add19085fd04346a74b06cb38ed836fcb2331db469076b4",
+      "expected_commitment_digest_hex": "28afc69c018df4b50c529352f6f2e077ec852331ad510346dd8c0c411cf0f4df",
+      "leaf_materials_utf8": [
+        "a",
+        "b"
+      ]
+    }
+  ],
+  "negative_cases": [
+    {
+      "name": "declared_cardinality as a JSON number token -> non-conformant",
+      "collection_subject": {
+        "commitment_scheme": "collection.merkle-sha3-256/1",
+        "root": "326fce21ee9bf021ff83b83fc16aae00455c7d88b00da3345daad4f810c6544a",
+        "declared_cardinality": 1,
+        "leaves": [
+          { "profile": "subject.binary/1", "commitment_digest_hex": "84ee4efec704171280f128479ed1bfa93f3346a91c529af84a91019444ced5aa" }
+        ]
+      },
+      "expected_outcome": "REJECTED",
+      "why": "declared_cardinality must be a string; a JSON number token violates the string-only discipline and the member-type rule"
+    },
+    {
+      "name": "declared_cardinality with a leading zero -> non-conformant grammar",
+      "collection_subject": {
+        "commitment_scheme": "collection.merkle-sha3-256/1",
+        "root": "326fce21ee9bf021ff83b83fc16aae00455c7d88b00da3345daad4f810c6544a",
+        "declared_cardinality": "01",
+        "leaves": [
+          { "profile": "subject.binary/1", "commitment_digest_hex": "84ee4efec704171280f128479ed1bfa93f3346a91c529af84a91019444ced5aa" }
+        ]
+      },
+      "expected_outcome": "REJECTED",
+      "why": "declared_cardinality must be canonical unsigned base-10 with no leading zeros"
+    },
+    {
+      "name": "declared_cardinality disagrees with the number of leaves -> non-conformant",
+      "collection_subject": {
+        "commitment_scheme": "collection.merkle-sha3-256/1",
+        "root": "326fce21ee9bf021ff83b83fc16aae00455c7d88b00da3345daad4f810c6544a",
+        "declared_cardinality": "2",
+        "leaves": [
+          { "profile": "subject.binary/1", "commitment_digest_hex": "84ee4efec704171280f128479ed1bfa93f3346a91c529af84a91019444ced5aa" }
+        ]
+      },
+      "expected_outcome": "REJECTED",
+      "why": "declared_cardinality (2) must equal the number of leaves (1) — the volume-fairness check (verifier-toolkit/1 §8.5.3) at the precondition boundary"
+    },
+    {
+      "name": "unexpected fifth member -> non-conformant",
+      "collection_subject": {
+        "commitment_scheme": "collection.merkle-sha3-256/1",
+        "root": "326fce21ee9bf021ff83b83fc16aae00455c7d88b00da3345daad4f810c6544a",
+        "declared_cardinality": "1",
+        "leaves": [
+          { "profile": "subject.binary/1", "commitment_digest_hex": "84ee4efec704171280f128479ed1bfa93f3346a91c529af84a91019444ced5aa" }
+        ],
+        "extra": "x"
+      },
+      "expected_outcome": "REJECTED",
+      "why": "exactly four members are allowed; an extra member is non-conformant"
+    },
+    {
+      "name": "uppercase hex root under the sha3-256 scheme -> non-conformant",
+      "collection_subject": {
+        "commitment_scheme": "collection.merkle-sha3-256/1",
+        "root": "326FCE21EE9BF021FF83B83FC16AAE00455C7D88B00DA3345DAAD4F810C6544A",
+        "declared_cardinality": "1",
+        "leaves": [
+          { "profile": "subject.binary/1", "commitment_digest_hex": "84ee4efec704171280f128479ed1bfa93f3346a91c529af84a91019444ced5aa" }
+        ]
+      },
+      "expected_outcome": "REJECTED",
+      "why": "under collection.merkle-sha3-256/1 the root must be 64 lowercase hex characters"
+    },
+    {
+      "name": "leaf commitment_digest_hex not 64 lowercase hex -> non-conformant",
+      "collection_subject": {
+        "commitment_scheme": "collection.merkle-sha3-256/1",
+        "root": "326fce21ee9bf021ff83b83fc16aae00455c7d88b00da3345daad4f810c6544a",
+        "declared_cardinality": "1",
+        "leaves": [
+          { "profile": "subject.binary/1", "commitment_digest_hex": "deadbeef" }
+        ]
+      },
+      "expected_outcome": "REJECTED",
+      "why": "each leaf commitment_digest_hex must be 64 lowercase hex characters"
+    }
+  ],
+  "must_hold": [
+    "canonical_bytes(subject) == UTF-8 bytes of RFC 8785 JCS of the collection subject JSON value",
+    "the object contains exactly the four members of subject.collection/1 and no others",
+    "subject_local_digest_hex == SHA3-256(canonical_bytes)",
+    "commitment_digest_hex == SHA3-256(ASCII(nonce_hex) || ASCII(subject_local_digest_hex)) (CCCP/1)",
+    "declared_cardinality is a canonical unsigned base-10 string equal to the leaf count; a number token, leading zero, or disagreement is non-conformant (the profile does not apply)",
+    "an object that violates the precondition has no canonical_bytes and MUST fail closed"
+  ]
+}

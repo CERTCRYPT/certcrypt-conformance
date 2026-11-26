@@ -1,0 +1,152 @@
+{
+  "primitive": "system-manifest/1 resolution",
+  "description": "Resolution of (system_root_fingerprint, kid) against a manifest view, and the half-open activity window an entry is valid in. Fixes the one obligation of the resolver contract that no digest can express: a resolver MUST answer only from entries already in its view, and MUST NOT expand the manifest on the fly.",
+  "why_this_is_a_primitive": "Every other vector here pins bytes. This one pins a REFUSAL. A resolver that fetches, derives or invents an entry it does not hold still produces a correct-looking signature verification — the digests all match, and the artifact is accepted under a key no other implementation would have resolved. There is no output to compare, so only a stated case catches it.",
+  "resolution_rule": "resolve(system_root_fingerprint, kid) answers with the entry stored at EXACTLY that (fingerprint, kid) pair, or an error. A miss on the fingerprint and a miss on the kid are DISTINCT errors: unknown_fingerprint means this resolver has no view of that manifest version at all, unknown_kid means it has the version but not that signing key. An implementation that collapses them loses the operator's ability to tell a wrong manifest from a retired key.",
+  "activity_window_rule": "An entry is active at reference time t iff valid_from <= t < valid_until — half-open, per system-manifest/1 §15. The instant valid_until is NOT active. Resolution and activity are separate questions: an entry outside its window still RESOLVES (it is in the view) and is reported inactive. A resolver that refuses to resolve an expired entry hides the difference between 'never known' and 'no longer valid'.",
+  "non_expansion_invariant": "No input to resolve() may cause the resolver's view to grow. The view is fixed when the resolver is built, from the manifest artifact; a resolution attempt is a pure lookup.",
+  "manifest_view": {
+    "note": "Two manifest versions, so a cross-version lookup has somewhere wrong to land. Keys are placeholders: this vector fixes resolution behaviour, not key material — the byte contract for keys is in key-derivation/.",
+    "versions": [
+      {
+        "system_root_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "entries": [
+          {
+            "kid": "system-domain-kid-1",
+            "algorithm": "ml-dsa-65-fips204-v1+ecdsa-p256",
+            "valid_from": "2026-01-01T00:00:00Z",
+            "valid_until": "2027-01-01T00:00:00Z"
+          },
+          {
+            "kid": "system-domain-kid-2",
+            "algorithm": "ml-dsa-65-fips204-v1+ecdsa-p256",
+            "valid_from": "2026-06-01T00:00:00Z",
+            "valid_until": "2028-01-01T00:00:00Z"
+          }
+        ]
+      },
+      {
+        "system_root_fingerprint": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "entries": [
+          {
+            "kid": "system-domain-kid-3",
+            "algorithm": "ml-dsa-65-fips204-v1+ecdsa-p256",
+            "valid_from": "2026-01-01T00:00:00Z",
+            "valid_until": "2027-01-01T00:00:00Z"
+          }
+        ]
+      }
+    ]
+  },
+  "resolution_cases": [
+    {
+      "name": "present pair resolves",
+      "fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kid": "system-domain-kid-1",
+      "expected_outcome": "resolved",
+      "expected_kid": "system-domain-kid-1",
+      "why": "the pair is in the view"
+    },
+    {
+      "name": "second kid in the same version resolves",
+      "fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kid": "system-domain-kid-2",
+      "expected_outcome": "resolved",
+      "expected_kid": "system-domain-kid-2",
+      "why": "a manifest version holds several signing keys at once"
+    },
+    {
+      "name": "unknown fingerprint",
+      "fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "kid": "system-domain-kid-1",
+      "expected_outcome": "unknown_fingerprint",
+      "why": "no view of that manifest version — NOT an unknown kid, even though the kid also does not exist there"
+    },
+    {
+      "name": "known fingerprint, unknown kid",
+      "fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kid": "system-domain-kid-99",
+      "expected_outcome": "unknown_kid",
+      "why": "the version is held but does not carry that signing key"
+    },
+    {
+      "name": "cross-version kid is NOT resolved",
+      "fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kid": "system-domain-kid-3",
+      "expected_outcome": "unknown_kid",
+      "why": "kid-3 exists, but under fingerprint bbbb… — a resolver keyed on kid alone would wrongly resolve this, accepting a signature from another manifest version"
+    },
+    {
+      "name": "empty kid",
+      "fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kid": "",
+      "expected_outcome": "unknown_kid",
+      "why": "absent identifiers do not match a wildcard; there is no default entry"
+    }
+  ],
+  "fingerprint_known_cases": [
+    {
+      "fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected_known": true
+    },
+    {
+      "fingerprint": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "expected_known": true
+    },
+    {
+      "fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "expected_known": false
+    }
+  ],
+  "activity_cases": [
+    {
+      "name": "at valid_from — active",
+      "kid": "system-domain-kid-1",
+      "reference_time": "2026-01-01T00:00:00Z",
+      "expected_active": true,
+      "why": "the lower bound is inclusive"
+    },
+    {
+      "name": "mid-window — active",
+      "kid": "system-domain-kid-1",
+      "reference_time": "2026-06-15T12:00:00Z",
+      "expected_active": true
+    },
+    {
+      "name": "at valid_until — NOT active",
+      "kid": "system-domain-kid-1",
+      "reference_time": "2027-01-01T00:00:00Z",
+      "expected_active": false,
+      "why": "half-open: the upper bound is exclusive. An implementation using <= here keeps a retired key alive for one instant, and two implementations disagree on an artifact signed at exactly that timestamp"
+    },
+    {
+      "name": "one second before valid_from — NOT active",
+      "kid": "system-domain-kid-1",
+      "reference_time": "2025-12-31T23:59:59Z",
+      "expected_active": false
+    },
+    {
+      "name": "expired entry still RESOLVES",
+      "kid": "system-domain-kid-1",
+      "reference_time": "2028-01-01T00:00:00Z",
+      "expected_active": false,
+      "expected_resolution": "resolved",
+      "why": "resolution and activity are separate: the entry is in the view, so it resolves and is reported inactive. Refusing to resolve it would be indistinguishable from never having known it"
+    },
+    {
+      "name": "overlapping windows both active",
+      "kid": "system-domain-kid-2",
+      "reference_time": "2026-06-15T12:00:00Z",
+      "expected_active": true,
+      "why": "kid-1 and kid-2 are both active here — a rotation overlap is normal, and the resolver does not pick one"
+    }
+  ],
+  "must_hold": [
+    "resolve() answers only from entries already in the view; no input causes the view to grow",
+    "an unknown fingerprint and an unknown kid are distinct, distinguishable errors",
+    "a kid present under a DIFFERENT fingerprint does not resolve",
+    "the activity window is half-open: valid_from <= t < valid_until",
+    "an entry outside its window resolves and reports inactive, rather than failing to resolve",
+    "fingerprint_is_known answers true for every version in the view and false otherwise"
+  ]
+}

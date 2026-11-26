@@ -1,0 +1,7 @@
+{
+  "result_code": "UNSUPPORTED",
+  "verification_target": "Issued",
+  "failed_check_ids": [
+    "BASE_CERTIFICATE_STRUCTURE_VALID"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "result_code": "ISSUED_INVALID",
+  "verification_target": "Independent",
+  "failed_check_ids": [
+    "BASE_CERTIFICATE_AUTHENTIC"
+  ],
+  "additional_verifications": {
+    "pqc_base_certificate_authentic": {
+      "performed": true,
+      "algorithm": "ML-DSA-65",
+      "passed": false
+    }
+  }
+}

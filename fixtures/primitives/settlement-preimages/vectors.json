@@ -1,0 +1,117 @@
+{
+  "primitive": "settlement leaf and batch-binding preimages",
+  "description": "The exact bytes of the two settlement preimages a node PRODUCES: the per-leaf preimage that hashes to a settlement leaf, and the batch-binding preimage whose digest becomes the on-chain memo.",
+  "why_this_is_a_primitive": "These two preimages already appear inside the P001 conformance fixture, but only as part of a verifier verdict. A verifier CONSUMES them; a node and the issuance service PRODUCE them. A producer needs the byte contract on its own terms — the same way level1-binding and operator-receipt have theirs — so that a producer can be checked without running a full verification. The values here are derived from P001 and cross-checked against it: same bytes, stated as a producer contract.",
+  "canonicalization": "INSERTION-ORDERED compact JSON — no spaces, no trailing newline, keys in the order declared below. NOT JCS. This is the same choice level1-binding and capacity-evidence make, and the opposite of operator-receipt and submission-set, which are JCS. Neither can be guessed from the other; each artifact pins its own.",
+  "two_canonicalizations_note": "Both tripwire digests below are the values JCS would have produced. They are pinned so an implementation that reaches for sorted keys — the natural wrong guess, and the one a JSON library gives you by default — fails against a stated value instead of drifting silently.",
+  "cross_reference": "These are P001's own preimages. A change here that does not also change fixtures/conformance/P001 means one of the two is wrong.",
+  "leaf_preimage": {
+    "artifact": "ccab1-leaf",
+    "hash_rule": "leaf_hash = SHA3-256(0x00 || insertion_ordered_bytes). The 0x00 prefix is the leaf domain separator of the settlement Merkle tree; internal nodes use 0x01. Omitting it makes a leaf hash collide with a raw digest of the same bytes, which is what the separator exists to prevent.",
+    "field_order": [
+      "v",
+      "system_id",
+      "rules_version",
+      "settlement_profile_id",
+      "batch_id",
+      "leaf_index",
+      "subtree_root",
+      "cost_commitment",
+      "consumed_quantity"
+    ],
+    "leaf_bound_field_note": "`subtree_root` is the leaf-bound value (independence.proof/1 §10.4): the Merkle root over the leaf's accepted commitment_ids. An implementation that binds a single commitment_id here instead produces a leaf no verifier resolves.",
+    "preimage": {
+      "v": "ccab1-leaf",
+      "system_id": "certcrypt",
+      "rules_version": "rules/conformance",
+      "settlement_profile_id": "settlement.aggregated.xrpl/1",
+      "batch_id": "batch-P001",
+      "leaf_index": "0",
+      "subtree_root": "cce1160aeb6e228d6db230bb23c1514395ac8d33c9fc0a8a9fb2b69bb0e86667",
+      "cost_commitment": "b83a499e1f0fa4e02a5089a14643688147fc64657f5df44b87c20ddb326ae548",
+      "consumed_quantity": "5.00"
+    },
+    "expected_bytes_utf8": "{\"v\":\"ccab1-leaf\",\"system_id\":\"certcrypt\",\"rules_version\":\"rules/conformance\",\"settlement_profile_id\":\"settlement.aggregated.xrpl/1\",\"batch_id\":\"batch-P001\",\"leaf_index\":\"0\",\"subtree_root\":\"cce1160aeb6e228d6db230bb23c1514395ac8d33c9fc0a8a9fb2b69bb0e86667\",\"cost_commitment\":\"b83a499e1f0fa4e02a5089a14643688147fc64657f5df44b87c20ddb326ae548\",\"consumed_quantity\":\"5.00\"}",
+    "expected_leaf_hash": "14bc7316e23575adcc0b1ca3894ef152b72443111cbe0ef1a69bd7a122b3c00e",
+    "tripwire_if_jcs_used": "d5883b89a7b0940c53f1ea92f5c25edebede99b1ae6680c3c76546ac90a7fc8f",
+    "tripwire_if_domain_prefix_omitted": "664e3d4b1ec0304235fcc51560e4cbf304e29ac4db00e34d287385c6b9344a6e"
+  },
+  "batch_binding_preimage": {
+    "artifact": "ccab1",
+    "digest_rule": "memo = \"ccab1:\" || SHA3-256(insertion_ordered_bytes), lowercase hex. No domain prefix here — unlike the leaf hash, this digest is not a Merkle leaf.",
+    "field_order": [
+      "v",
+      "system_id",
+      "rules_version",
+      "settlement_profile_id",
+      "batch_id",
+      "window_id",
+      "leaf_count",
+      "total_quantity",
+      "settlement_root"
+    ],
+    "preimage": {
+      "v": "ccab1",
+      "system_id": "certcrypt",
+      "rules_version": "rules/conformance",
+      "settlement_profile_id": "settlement.aggregated.xrpl/1",
+      "batch_id": "batch-P001",
+      "window_id": "window-P001",
+      "leaf_count": "2",
+      "total_quantity": "10.00",
+      "settlement_root": "173cd1561c7a201b0c3f7246f80edec20a136e08eb78fad86df404e137874174"
+    },
+    "expected_bytes_utf8": "{\"v\":\"ccab1\",\"system_id\":\"certcrypt\",\"rules_version\":\"rules/conformance\",\"settlement_profile_id\":\"settlement.aggregated.xrpl/1\",\"batch_id\":\"batch-P001\",\"window_id\":\"window-P001\",\"leaf_count\":\"2\",\"total_quantity\":\"10.00\",\"settlement_root\":\"173cd1561c7a201b0c3f7246f80edec20a136e08eb78fad86df404e137874174\"}",
+    "expected_digest": "b240f836dbf86b9397374f80b7e15eb37cdcac8e56024222540eb01f60a0251f",
+    "expected_memo": "ccab1:b240f836dbf86b9397374f80b7e15eb37cdcac8e56024222540eb01f60a0251f",
+    "tripwire_if_jcs_used": "75834f733929206f74bae072c66defdd2f4270a96ee040dce359df729bc76b9a"
+  },
+  "quantity_note": "Quantities are STRINGS with their scale preserved (\"5.00\", not \"5\" or 5). The scale is part of the signed bytes: a producer that normalizes \"5.00\" to \"5\", or emits a JSON number, changes the digest. This is the same discipline the rest of the suite applies to quantities.",
+  "profile_resolution_note": "`settlement_profile_id` inside both preimages MUST be the profile the rules domain resolves to (see rules-domain/vectors.json), never a compile-time constant. Taking it from a constant hashes the wrong substrate's identifier into the leaf — and every digest still looks internally consistent.",
+  "negative_cases": [
+    {
+      "name": "JCS instead of insertion order",
+      "scenario": "either preimage canonicalized with sorted keys",
+      "expected_outcome": "REJECTED",
+      "why": "the pinned tripwire digests are what this produces; both differ from the contract"
+    },
+    {
+      "name": "leaf hashed without the 0x00 domain prefix",
+      "scenario": "leaf_hash computed as SHA3-256(bytes)",
+      "expected_outcome": "REJECTED",
+      "why": "the leaf is then indistinguishable from an internal node or a bare digest of the same bytes"
+    },
+    {
+      "name": "quantity scale normalized",
+      "scenario": "consumed_quantity emitted as \"5\" rather than \"5.00\"",
+      "expected_outcome": "REJECTED",
+      "why": "different bytes, different digest — and the two representations are equal as numbers, so nothing numeric catches it"
+    },
+    {
+      "name": "quantity emitted as a JSON number",
+      "scenario": "consumed_quantity emitted as 5.00 rather than \"5.00\"",
+      "expected_outcome": "REJECTED",
+      "why": "JSON numbers have no fixed textual form; the contract carries quantities as strings precisely to avoid that"
+    },
+    {
+      "name": "settlement_profile_id from a constant",
+      "scenario": "the profile id is taken from a compile-time constant rather than resolved from rules_version",
+      "expected_outcome": "REJECTED",
+      "why": "correct only by accident when the constant happens to match the domain; wrong the moment a domain settles elsewhere"
+    },
+    {
+      "name": "leaf bound to a commitment_id",
+      "scenario": "subtree_root replaced by a single accepted commitment_id",
+      "expected_outcome": "REJECTED",
+      "why": "the leaf-bound field is the sub-tree root over the leaf's commitments (independence.proof/1 §10.4), not one member of it"
+    }
+  ],
+  "must_hold": [
+    "both preimages canonicalize in insertion order, never JCS",
+    "leaf_hash = SHA3-256(0x00 || bytes); the batch-binding digest has no domain prefix",
+    "the memo is the prefix \"ccab1:\" concatenated with the lowercase-hex digest",
+    "quantities keep their scale and stay strings",
+    "settlement_profile_id is resolved from rules_version, not from a constant",
+    "these values reproduce P001 exactly — a divergence here or there means one of the two is wrong"
+  ]
+}

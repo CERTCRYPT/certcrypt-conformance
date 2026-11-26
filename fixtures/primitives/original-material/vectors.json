@@ -1,0 +1,97 @@
+{
+  "primitive": "original_material_verification",
+  "description": "Complete verification against original material (verifier-toolkit/1 §8.5): the verifier holds the original material and confirms it matches the certificate's committed subjects. For each subject it recomputes canonical_bytes(subject) under the declared profile, derives the verifier-local subject_local_digest_hex = SHA3-256(canonical_bytes), and rebuilds the CCCP/1 commitment SHA3-256(ASCII(nonce_hex) || ASCII(subject_local_digest_hex)); it MUST equal the certificate's commitment_digest_hex. For subject.collection/1, it also reconstructs the collection root from the ordered leaves under collection.merkle-sha3-256/1 and requires the leaf count to equal declared_cardinality. This pins the bytes so any toolkit in any language detects a volume/cardinality lie identically (the volume-fairness check of verifier-toolkit/1 §8.5.3, for subjects declared as collections).",
+  "canonicalization": "subject.binary/1 = exact input bytes (opaque). subject.collection/1 = RFC 8785 JCS of the collection JSON object. collection.merkle-sha3-256/1 leaf_preimage = utf8('CERTCRYPT:collection.merkle-sha3-256/1:leaf') || u64be(len(collection_salt_bytes)) || collection_salt_bytes || u64be(len(leaf_profile_bytes)) || leaf_profile_bytes || u64be(len(leaf_canonical_bytes)) || leaf_canonical_bytes, where collection_salt_bytes = ASCII(nonce_hex) (subject.collection/1 §8) ; node_preimage = utf8('CERTCRYPT:collection.merkle-sha3-256/1:node') || left_hash || right_hash (32 raw bytes each). DISTINCT from the settlement Merkle (0x00/0x01 prefixes) — MUST NOT substitute.",
+  "commitment_construction": "commitment_digest_hex = SHA3-256(ASCII(nonce_hex) || ASCII(subject_local_digest_hex)); all hex lowercase, ASCII concatenation of the hex strings (not the binary digests). subject_local_digest_hex is verifier-local and MUST NOT be published — it is pinned here only as a conformance check value.",
+  "nonce_hex": "abababababababababababababababababababababababababababababababab",
+  "subjects": [
+    {
+      "index": 0,
+      "material_utf8": "hello certcrypt binary subject",
+      "note": "opaque binary subject: canonical_bytes = exact input bytes",
+      "expected_subject_local_digest_hex": "155ab9b99e82f2331e27470dfaa24bc11a714c7c2e222bf707f2901d14e2323a",
+      "expected_commitment_digest_hex": "dbded2a9a61e7e890bc4a762732d17c2beeaf1af2882ddd4053c259a0425f01d",
+      "profile": "subject.binary/1"
+    },
+    {
+      "index": 1,
+      "note": "collection of 3 binary leaves; root reconstructed under collection.merkle-sha3-256/1; declared_cardinality MUST equal the leaf count (3)",
+      "leaf_profile": "subject.binary/1",
+      "leaf_materials_utf8": [
+        "record-1",
+        "record-2",
+        "record-3"
+      ],
+      "expected_leaf_hashes": [
+        "635bcb69053ba75aff35a1ff535d648d73e01c9801d9edc40e22806e7fa26915",
+        "76e8b983eb9e2f9df01b8a059e0739be2fbac37712a2c4275b35945e09aef0a7",
+        "73d20624120a9b65240b83aa94de96ffd72d0bdb7ee03bb04a5add33c4e97665"
+      ],
+      "collection_object": {
+        "commitment_scheme": "collection.merkle-sha3-256/1",
+        "root": "4cf67338380507e0150c836ff34769f87a297454c5d48fe1de70223895684879",
+        "declared_cardinality": "3",
+        "leaves": [
+          {
+            "profile": "subject.binary/1",
+            "commitment_digest_hex": "635bcb69053ba75aff35a1ff535d648d73e01c9801d9edc40e22806e7fa26915"
+          },
+          {
+            "profile": "subject.binary/1",
+            "commitment_digest_hex": "76e8b983eb9e2f9df01b8a059e0739be2fbac37712a2c4275b35945e09aef0a7"
+          },
+          {
+            "profile": "subject.binary/1",
+            "commitment_digest_hex": "73d20624120a9b65240b83aa94de96ffd72d0bdb7ee03bb04a5add33c4e97665"
+          }
+        ]
+      },
+      "expected_root": "4cf67338380507e0150c836ff34769f87a297454c5d48fe1de70223895684879",
+      "expected_collection_canonical_utf8": "{\"commitment_scheme\":\"collection.merkle-sha3-256/1\",\"declared_cardinality\":\"3\",\"leaves\":[{\"commitment_digest_hex\":\"635bcb69053ba75aff35a1ff535d648d73e01c9801d9edc40e22806e7fa26915\",\"profile\":\"subject.binary/1\"},{\"commitment_digest_hex\":\"76e8b983eb9e2f9df01b8a059e0739be2fbac37712a2c4275b35945e09aef0a7\",\"profile\":\"subject.binary/1\"},{\"commitment_digest_hex\":\"73d20624120a9b65240b83aa94de96ffd72d0bdb7ee03bb04a5add33c4e97665\",\"profile\":\"subject.binary/1\"}],\"root\":\"4cf67338380507e0150c836ff34769f87a297454c5d48fe1de70223895684879\"}",
+      "expected_subject_local_digest_hex": "52a5f431af364a13cd739b13ec5fe8f80ec6d850b57b1856e9e57bef4d866f1b",
+      "expected_commitment_digest_hex": "c8383cd794c62fbef770dc662b7c0046da9d6e99afdb020f0a0198a40b5dd071",
+      "profile": "subject.collection/1"
+    }
+  ],
+  "negative_cases": [
+    {
+      "name": "cardinality lie",
+      "scenario": "declared_cardinality='4' but only 3 leaves delivered (or vice versa)",
+      "expected_outcome": "REJECTED",
+      "why": "leaf count that participated in the root != declared_cardinality"
+    },
+    {
+      "name": "tampered leaf",
+      "scenario": "one leaf material altered by a byte",
+      "expected_outcome": "INDEPENDENT_INVALID",
+      "why": "recomputed root != declared root"
+    },
+    {
+      "name": "tampered binary subject",
+      "scenario": "binary subject material altered by a byte",
+      "expected_outcome": "INDEPENDENT_INVALID",
+      "why": "recomputed commitment != certificate commitment_digest_hex"
+    },
+    {
+      "name": "wrong merkle scheme substituted",
+      "scenario": "settlement Merkle (0x00/0x01) used instead of collection.merkle-sha3-256/1",
+      "expected_outcome": "REJECTED",
+      "why": "recomputed root != declared root (distinct scheme)"
+    },
+    {
+      "name": "empty collection",
+      "scenario": "declared_cardinality='0' or zero leaves delivered",
+      "expected_outcome": "REJECTED",
+      "why": "empty tree is invalid under collection.merkle-sha3-256/1 §12.4"
+    }
+  ],
+  "must_hold": [
+    "subject.binary/1 canonical_bytes is byte-identity (no transform)",
+    "subject.collection/1 canonical_bytes is RFC 8785 JCS of the collection object (keys sorted: commitment_scheme, declared_cardinality, leaves, root)",
+    "collection leaf/node preimage use domain tags + u64be big-endian length prefixes (NOT the settlement 0x00/0x01 prefixes)",
+    "the collection root is reconstructed from the ordered leaves; single leaf -> its own hash; odd width -> promote lone right-edge hash unchanged",
+    "leaf count that participated in the root MUST equal declared_cardinality (volume-fairness check, verifier-toolkit/1 §8.5.3)",
+    "commitment = SHA3-256(ASCII(nonce_hex) || ASCII(subject_local_digest_hex)), all lowercase hex, ASCII of the hex strings",
+    "subject_local_digest_hex is verifier-local and never published in a certificate"
+  ]
+}

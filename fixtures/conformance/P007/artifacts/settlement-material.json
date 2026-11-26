@@ -1,0 +1,76 @@
+{
+  "settlement_profile_id": "settlement.aggregated.xrpl/1",
+  "settlement_action": {
+    "from": "rCONFORMANCEpOOLaccountXXXXXXXXXXXX",
+    "quantity": "1.00 CERT",
+    "memo": "ccab1:c0add3b2a36b398be5d44d9b3f78e642c2bf0e50b9e7ee837c6dbde68e25bd39",
+    "contract": "00000000C1F0A0E6E5F1D7B4A9C8E3F2D1B0A9C8E7F6D5C4",
+    "name": "payment",
+    "chain_id": "xrpl-network-conformance",
+    "trx_id": "trx-P007",
+    "action_ordinal": "0"
+  },
+  "finality_proof": {
+    "block_num": "5000",
+    "block_id": "eb8d070e840485475995ddd4db6a5476858ca99acb4791bfbb632a2cedbf2ada",
+    "last_irreversible_block_num": "5000",
+    "last_irreversible_block_id": "eb8d070e840485475995ddd4db6a5476858ca99acb4791bfbb632a2cedbf2ada",
+    "block_timestamp": "2026-04-11T12:00:00Z"
+  },
+  "batch_manifest": {
+    "batch_id": "batch-P007",
+    "window_id": "window-P007",
+    "leaf_count": "1",
+    "total_quantity": "1.00",
+    "settlement_root": "7fb11b37b5751f6d3724f083ecebe32ec8b02114a5e6f193e52ec82881930e9a",
+    "system_id": "certcrypt",
+    "rules_version": "rules/conformance",
+    "settlement_profile_id": "settlement.aggregated.xrpl/1"
+  },
+  "capacity_consumption_proof": {
+    "total_quantity": "1.00",
+    "leaf_quantity": "1.00",
+    "token_symbol": "CERT",
+    "token_contract": "00000000C1F0A0E6E5F1D7B4A9C8E3F2D1B0A9C8E7F6D5C4"
+  },
+  "submission_assignment_proof": {
+    "subtree_root": "d2e9130bf5bc2b80de7d13f6aa536a9cd73f0655ad46579dafd5c6e03c8b1c1f",
+    "leaf_index": "0",
+    "leaf_preimage": {
+      "v": "ccab1-leaf",
+      "system_id": "certcrypt",
+      "rules_version": "rules/conformance",
+      "settlement_profile_id": "settlement.aggregated.xrpl/1",
+      "batch_id": "batch-P007",
+      "leaf_index": "0",
+      "subtree_root": "d2e9130bf5bc2b80de7d13f6aa536a9cd73f0655ad46579dafd5c6e03c8b1c1f",
+      "cost_commitment": "803c97eeb2a68135cbd3059faa3aba0e6ac3da29a7d53e8ad69ebd1279ca01e9",
+      "consumed_quantity": "1.00"
+    },
+    "leaf_hash": "7fb11b37b5751f6d3724f083ecebe32ec8b02114a5e6f193e52ec82881930e9a",
+    "sibling_hashes": []
+  },
+  "authorization_bridge_proofs": [
+    {
+      "resolved_authorization_digest": "304342bf7d8dc2cfa82c73c15387776c9ac7e579c869f166903d7627ecd12ee9",
+      "cost_commitment": "803c97eeb2a68135cbd3059faa3aba0e6ac3da29a7d53e8ad69ebd1279ca01e9",
+      "consumed_quantity": "1.00",
+      "batch_binding_preimage": {
+        "v": "ccab1",
+        "system_id": "certcrypt",
+        "rules_version": "rules/conformance",
+        "settlement_profile_id": "settlement.aggregated.xrpl/1",
+        "batch_id": "batch-P007",
+        "window_id": "window-P007",
+        "leaf_count": "1",
+        "total_quantity": "1.00",
+        "settlement_root": "7fb11b37b5751f6d3724f083ecebe32ec8b02114a5e6f193e52ec82881930e9a"
+      }
+    }
+  ],
+  "coherence_material": {
+    "system_id": "certcrypt",
+    "rules_version": "rules/conformance",
+    "settlement_profile_id": "settlement.aggregated.xrpl/1"
+  }
+}

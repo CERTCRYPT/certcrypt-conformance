@@ -1,0 +1,38 @@
+{
+  "label": "three-leaf tree exercising odd-width promotion at level 0",
+  "commitment_scheme": "collection.merkle-sha3-256/1",
+  "leaf_profile": "subject.binary/1",
+  "declared_cardinality": "3",
+  "leaves_hex": [
+    "7630333a30",
+    "7630333a31",
+    "7630333a32"
+  ],
+  "root": "77cc2a941b8d8dbaa509352cb3d17bc2bf3b27fc6eed80c7917680f90ae53358",
+  "inclusion_proofs": [
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "0",
+      "sibling_hashes": [
+        "0d779d18b49af2ff57411591711b69d6bcbb9e31b151fb2900d9bf0aed0e305a",
+        "9f04c0e833ae3cb8733317c6ec8c2f194d1b0ca16880793b5a88aead81f127b2"
+      ]
+    },
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "1",
+      "sibling_hashes": [
+        "cb0423e0273d4d2ed3272985e8683a23aaac5c659e287c34d7630d534eb4b553",
+        "9f04c0e833ae3cb8733317c6ec8c2f194d1b0ca16880793b5a88aead81f127b2"
+      ]
+    },
+    {
+      "proof_version": "collection.merkle-sha3-256/1",
+      "leaf_index": "2",
+      "sibling_hashes": [
+        "0ef25d1226186fbc3de314e5dc6131a21b64a4078e51ee4020b6f19594f137de"
+      ]
+    }
+  ],
+  "collection_salt_hex": "101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f"
+}

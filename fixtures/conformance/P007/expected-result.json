@@ -1,0 +1,20 @@
+{
+  "result_code": "INDEPENDENT_VALID",
+  "verification_target": "Independent",
+  "failed_check_ids": [],
+  "certcrypt_lineage": {
+    "certcrypt_domain_bound": true,
+    "independence_under_certcrypt_rules": true,
+    "settlement_bound": true,
+    "capacity_consumption_bound": true,
+    "history_bound_under_certcrypt": true
+  },
+  "complete_verification_against_original_material_performed": true,
+  "complete_verification_against_original_material_passed": true,
+  "subject_scope": [
+    {
+      "profile": "subject.collection/1",
+      "opaque": false
+    }
+  ]
+}

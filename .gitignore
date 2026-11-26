@@ -1,0 +1,73 @@
+# Secrets and key material
+# ·················
+# This repository is public and data-only. The signing keys behind the fixtures
+# are synthetic and their seeds live in the generator, but these patterns stay
+# broad on purpose — a false positive costs one `git add -f`, a false negative is
+# unrecoverable once pushed.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+*.confidential.*
+*.secrets.*
+*.local.*
+# Never commit non-public notes.
+*.private.*
+*.internal.*
+
+# Generator: Python
+# ·················
+# The reference generator is the only code here. Its virtualenv and bytecode are
+# environment-specific and never committed; `requirements.txt` pins what it needs,
+# which is what makes the fixtures reproducible on someone else's machine.
+generator/.venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Scratch
+# ·················
+# The committed contract is data (fixtures/ + schemas/) produced by generator/.
+# Local experiments and scratch generator runs land here, ignored.
+scratch/
+tmp/
+.tmp/
+*.bak
+
+# Editors and OS
+# ·················
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+# ·················
+*.log
+
+# NOTE — deliberately NOT ignored here.
+#
+# `dist/`, `build/` and `*.autogen.*` appear in the other CERTCRYPT repositories,
+# where they mean "compiler output, rebuildable from source". They are omitted
+# from this one on purpose.
+#
+# In this repository the generated artifacts ARE the deliverable: fixtures/ is
+# emitted by generator/ and committed, because a conformance contract that a
+# third party cannot diff and pin is not a contract. A rule matching generated
+# data here would silently drop part of that contract from a commit — the fixture
+# would still pass locally, since it remains on disk, and its absence would only
+# surface for whoever cloned the repo expecting the full vector set.
+#
+# Anything genuinely regenerable and disposable belongs under scratch/.

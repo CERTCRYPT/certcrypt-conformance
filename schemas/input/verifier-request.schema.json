@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://certcrypt.com/schemas/verifier-request.schema.json",
+  "title": "CERTCRYPT Verifier Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "verification_target_requested",
+    "input_mode"
+  ],
+  "properties": {
+    "verification_target_requested": {
+      "description": "The target to verify against. `auto` resolves it from what the artifact carries; `issued` and `independent` assert an expected state and fail if the artifact does not support it.",
+      "type": "string",
+      "enum": [
+        "auto",
+        "issued",
+        "independent"
+      ]
+    },
+    "input_mode": {
+      "description": "How the artifacts are supplied: `package` for a single `verification_package`, `artifact_set` when the pieces are passed individually.",
+      "type": "string",
+      "enum": [
+        "package",
+        "artifact_set"
+      ]
+    },
+    "verification_package_path": {
+      "description": "Path to the `verification_package` — the envelope carrying everything a verifier needs for the `package` input mode.",
+      "type": "string"
+    },
+    "base_certificate_path": {
+      "description": "Path to the signed base certificate: what the issuer produced, and the artifact whose commitment binds the subject material. Optional in the request shape so an artifact set without it can be represented and classified as `INCOMPLETE` under `BASE_CERTIFICATE_PRESENT`; every successful route still requires it.",
+      "type": "string"
+    },
+    "independence_proof_path": {
+      "description": "Path to the `independence_proof`, which carries the evidence that the settlement window closed for this certificate.",
+      "type": "string"
+    },
+    "settlement_material_path": {
+      "description": "Path to the settlement material the proof resolves against.",
+      "type": "string"
+    },
+    "capacity_evidence_path": {
+      "description": "Path to the zero-data capacity evidence of the certificate's commitment. Optional in the request: the `Issued` route does not use it, and an `Independent` verification without it is `INCOMPLETE`.",
+      "type": "string"
+    },
+    "commitment_inclusion_proof_path": {
+      "description": "Path to the per-commitment inclusion proof (`commitment` → `subtree_root`) for the certificate under verification. Optional in the request: the `Issued` route does not use it, and an `Independent` verification without it is `INCOMPLETE`.",
+      "type": "string"
+    },
+    "system_foundation_path": {
+      "description": "Path to the system foundation statement, from which the system root fingerprint is derived.",
+      "type": "string"
+    },
+    "supporting_artifact_paths": {
+      "description": "Paths to any further artifacts the verification needs but that have no dedicated field.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "original_material_path": {
+      "description": "Path to the original material to compare against what the certificate commits to. Optional: the structural planes verify without it, and supplying it adds the comparison rather than being a precondition.",
+      "type": "string"
+    },
+    "system_domain_artifact_paths": {
+      "description": "Paths to the artifacts establishing the system domain the certificate is attributed to.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "rules_artifact_paths": {
+      "description": "Paths to the published rules artifacts for the `rules_version` the certificate is bound to. A verifier resolves that exact version — later ones neither supersede it nor re-evaluate it.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "input_mode": {
+            "const": "package"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "verification_package_path"
+        ]
+      }
+    }
+  ]
+}
